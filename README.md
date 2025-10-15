@@ -398,3 +398,83 @@ Notes:
 Troubleshooting:
 - After changes, restart services: `./airline-club-manager.sh stop && ./airline-club-manager.sh start`
 - Verify with: `curl -I http://<your-ip>:9000/` and ensure status 200/302 instead of 400.
+
+## Docker deployment (container-as-server)
+
+This project includes a cross-platform Docker wrapper that ensures all installation and runtime happen inside a container, with interactive menu support.
+
+Usage: ./docker-wrapper.sh <command> [options]
+Commands:
+  build                 Build Docker image
+  start                 Start container (detached) with host project mounted
+  stop                  Stop and remove container
+  shell                 Open interactive shell in running container
+  menu                  Run installer menu inside container
+  install               Run full installation flow inside container
+  analyze               Run analyze & repair inside container
+  logs [file]           Tail logs from host project (default: all known logs)
+  run <args...>         Pass-through to airline-club-manager.sh inside container
+
+Env vars:
+  PROJECT_DIR_HOST      Host path to airline-club (default: /home/kali/airline-club)
+  IMAGE_NAME            Docker image name (default: airline-club-java8)
+  CONTAINER_NAME        Container name (default: airline-club-runtime)
+
+Quickstart:
+- Build the image:
+  - cd /home/kali/airline-club-2
+  - ./docker-wrapper.sh build
+- Start the container (server runs inside the container):
+  - Linux: ./docker-wrapper.sh start
+    - Uses host networking to reach MySQL on localhost:3306 and bind app ports directly
+  - macOS: ./docker-wrapper.sh start
+    - Docker Desktop does not support host networking; common ports 9000 and 7777 are published by default
+    - To publish more ports (e.g., 3306, 8080), set EXTRA_PORTS before start:
+      - export EXTRA_PORTS="-p 3306:3306 -p 8080:8080"
+      - ./docker-wrapper.sh start
+- Interactive installer menu (inside the container):
+  - ./docker-wrapper.sh menu
+- Analyze & repair (inside the container):
+  - ./docker-wrapper.sh analyze
+- Tail logs (from host-mounted files):
+  - ./docker-wrapper.sh logs
+  - ./docker-wrapper.sh logs datainit.log
+
+Notes:
+- If your project directory differs from /home/kali/airline-club, set:
+  - export PROJECT_DIR_HOST=/path/to/airline-club
+- For macOS, ensure you publish any ports you need to access via localhost with EXTRA_PORTS.
+- All commands execute inside the running container; nothing is executed on the host outside Docker.
+
+---
+
+**Note:** This is an unofficial installer for the Airline Club project. For official support and updates, please refer to the [original repository](https://github.com/patsonluk/airline).
+
+# Trusted Hosts (Play Host Filter)
+
+Play Framework protects against DNS rebinding and Host header attacks by only accepting requests from allowed hosts. If you see errors like:
+
+- "400 Bad Request: Host not allowed: 192.168.50.77:9000"
+
+you must add your server's IP or domain to the trusted hosts list.
+
+Our installer provides a new menu option to manage this:
+
+- Main Menu → 11) Trusted Hosts (Allow IPs/Domains)
+  - Add host (IP or domain)
+  - Remove host
+  - Reset to defaults (localhost, 127.0.0.1, .*)
+  - Apply now and restart web server
+
+The script persists your choices and applies them to both:
+- Source conf: ~/airline-club/airline-web/conf/application.conf
+- Staged conf: ~/airline-club/airline-web/target/universal/stage/conf/application.conf
+
+Notes:
+- The installer auto-detects the machine’s IPs and adds them to the trusted list when starting services.
+- You can also run the command directly: `./airline-club-manager.sh trusted-hosts`
+- Use `.*` to allow all hosts, but it’s recommended to restrict to your domain/IPs in production.
+
+Troubleshooting:
+- After changes, restart services: `./airline-club-manager.sh stop && ./airline-club-manager.sh start`
+- Verify with: `curl -I http://<your-ip>:9000/` and ensure status 200/302 instead of 400.
