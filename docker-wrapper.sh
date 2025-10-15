@@ -23,7 +23,7 @@ if [[ "$OS_NAME" == "Darwin" ]]; then
   # Docker Desktop for macOS does not support --network host
   NETWORK_OPTS=""
   # Publish common server ports so you can reach them via localhost
-  PORT_OPTS="-p 9000:9000 -p 7777:7777"
+  PORT_OPTS="-p 9000:9000 -p 7777:7777 -p 3306:3306"
 else
   # Linux: use host networking so container can access services on 127.0.0.1
   NETWORK_OPTS="--network host"
@@ -106,8 +106,8 @@ ensure_started() {
 }
 
 cmd_build() {
-  detect_docker
-  "${DOCKER[@]}" build -t "$IMAGE_NAME" "$(dirname "$0")"
+  # Build base image, then run installation inside container and commit to an installed tag
+  cmd_build_install
 }
 
 cmd_start() {
@@ -134,14 +134,14 @@ in_container() {
   ensure_built
   ensure_started
   detect_docker
-  "${DOCKER[@]}" exec -i "$CONTAINER_NAME" bash -lc "chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") ${args[*]}"
+  "${DOCKER[@]}" exec -i "$CONTAINER_NAME" bash -lc "set -e; mkdir -p /var/run/mysqld; chown -R mysql:mysql /var/run/mysqld; if ! mysqladmin ping --silent >/dev/null 2>&1; then mysqld --user=mysql --daemonize || (service mysql start || true); fi; export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") ${args[*]}"
 }
 
 cmd_menu() {
   ensure_built
   ensure_started
   detect_docker
-  "${DOCKER[@]}" exec -it "$CONTAINER_NAME" bash -lc "chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") menu"
+  "${DOCKER[@]}" exec -it "$CONTAINER_NAME" bash -lc "set -e; mkdir -p /var/run/mysqld; chown -R mysql:mysql /var/run/mysqld; if ! mysqladmin ping --silent >/dev/null 2>&1; then mysqld --user=mysql --daemonize || (service mysql start || true); fi; export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") menu"
 }
 
 cmd_install() {
@@ -187,7 +187,7 @@ cmd_build_install() {
   ensure_started
   echo "[INFO] Running installation inside container (HOME=/opt to bake into image)..."
   detect_docker
-  "${DOCKER[@]}" exec -i "$CONTAINER_NAME" bash -lc "export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") install"
+  "${DOCKER[@]}" exec -i "$CONTAINER_NAME" bash -lc "set -e; mkdir -p /var/run/mysqld; chown -R mysql:mysql /var/run/mysqld; if ! mysqladmin ping --silent >/dev/null 2>&1; then mysqld --user=mysql --daemonize || (service mysql start || true); fi; export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") install"
   echo "[INFO] Committing container '$CONTAINER_NAME' to image '$IMAGE_NAME:$installed_tag'..."
   "${DOCKER[@]}" commit "$CONTAINER_NAME" "$IMAGE_NAME:$installed_tag"
   echo "[DONE] Image committed: $IMAGE_NAME:$installed_tag"
