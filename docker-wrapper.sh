@@ -64,7 +64,6 @@ Commands:
   analyze               Run analyze & repair inside container
   logs [file]           Tail logs from host project (default: all known logs)
   run <args...>         Pass-through to airline-club-manager.sh inside container
-  build-install         Build image, run install inside container, then commit to a new tag
   push [repo] [tag]     Tag committed image and push to Docker registry (e.g., docker.io/user/airline-club-java8 installed)
 
 Env vars:
@@ -93,8 +92,15 @@ ensure_built() {
 
 ensure_started() {
   detect_docker
-  if ! "${DOCKER[@]}" ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
-    echo "[INFO] Starting container '$CONTAINER_NAME'..."
+  # Check if container exists (even if stopped)
+  local exists running
+  exists=$("${DOCKER[@]}" ps -a --format '{{.Names}}' | grep -x "$CONTAINER_NAME" || true)
+  running=$("${DOCKER[@]}" ps --format '{{.Names}}' | grep -x "$CONTAINER_NAME" || true)
+  if [[ -n "$exists" && -z "$running" ]]; then
+    echo "[INFO] Starting existing container '$CONTAINER_NAME'..."
+    "${DOCKER[@]}" start "$CONTAINER_NAME" >/dev/null
+  elif [[ -z "$running" ]]; then
+    echo "[INFO] Creating and starting container '$CONTAINER_NAME'..."
     "${DOCKER[@]}" run -d --name "$CONTAINER_NAME" \
       $NETWORK_OPTS \
       $PORT_OPTS $EXTRA_PORTS \
@@ -106,8 +112,11 @@ ensure_started() {
 }
 
 cmd_build() {
-  # Build base image, then run installation inside container and commit to an installed tag
-  cmd_build_install
+  # Build base image only; install is baked into Dockerfile now
+  ensure_built
+  detect_docker
+  echo "[INFO] Image '$IMAGE_NAME' is built with installer baked in (Ubuntu 22 + Java 11)."
+  "${DOCKER[@]}" images --format 'table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.Size}}' | grep -E "^$IMAGE_NAME\s" || true
 }
 
 cmd_start() {
@@ -134,14 +143,14 @@ in_container() {
   ensure_built
   ensure_started
   detect_docker
-  "${DOCKER[@]}" exec -i "$CONTAINER_NAME" bash -lc "set -e; mkdir -p /var/run/mysqld; chown -R mysql:mysql /var/run/mysqld; if ! mysqladmin ping --silent >/dev/null 2>&1; then mysqld --user=mysql --daemonize || (service mysql start || true); fi; export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") ${args[*]}"
+  "${DOCKER[@]}" exec -i "$CONTAINER_NAME" bash -lc "set -e; mkdir -p /var/run/mysqld; chown -R mysql:mysql /var/run/mysqld; if ! mysqladmin ping --silent >/dev/null 2>&1; then mysqld --user=mysql --daemonize || (service mysql start || true); fi; export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") ${args[*]}"
 }
 
 cmd_menu() {
   ensure_built
   ensure_started
   detect_docker
-  "${DOCKER[@]}" exec -it "$CONTAINER_NAME" bash -lc "set -e; mkdir -p /var/run/mysqld; chown -R mysql:mysql /var/run/mysqld; if ! mysqladmin ping --silent >/dev/null 2>&1; then mysqld --user=mysql --daemonize || (service mysql start || true); fi; export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") menu"
+  "${DOCKER[@]}" exec -it "$CONTAINER_NAME" bash -lc "set -e; mkdir -p /var/run/mysqld; chown -R mysql:mysql /var/run/mysqld; if ! mysqladmin ping --silent >/dev/null 2>&1; then mysqld --user=mysql --daemonize || (service mysql start || true); fi; export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") menu"
 }
 
 cmd_install() {
@@ -180,18 +189,6 @@ cmd_logs() {
   fi
 }
 
-# Build + Install (in container) + Commit image
-cmd_build_install() {
-  local installed_tag="${INSTALLED_TAG:-installed}"
-  ensure_built
-  ensure_started
-  echo "[INFO] Running installation inside container (HOME=/opt to bake into image)..."
-  detect_docker
-  "${DOCKER[@]}" exec -i "$CONTAINER_NAME" bash -lc "set -e; mkdir -p /var/run/mysqld; chown -R mysql:mysql /var/run/mysqld; if ! mysqladmin ping --silent >/dev/null 2>&1; then mysqld --user=mysql --daemonize || (service mysql start || true); fi; export HOME=/opt; chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") install"
-  echo "[INFO] Committing container '$CONTAINER_NAME' to image '$IMAGE_NAME:$installed_tag'..."
-  "${DOCKER[@]}" commit "$CONTAINER_NAME" "$IMAGE_NAME:$installed_tag"
-  echo "[DONE] Image committed: $IMAGE_NAME:$installed_tag"
-}
 
 # Tag & Push to registry
 cmd_push() {
@@ -237,8 +234,7 @@ interactive_menu() {
     echo "7) Analyze & Repair"
     echo "8) Tail logs"
     echo "9) Run custom manager args"
-    echo "10) Build + Install + Commit image"
-    echo "11) Tag & Push to registry"
+    echo "10) Tag & Push to registry"
     echo "0) Exit"
     read -r -p "Select an option: " choice
     case "$choice" in
@@ -264,9 +260,6 @@ interactive_menu() {
         cmd_run "${ARGS[@]}"
         ;;
       10)
-        cmd_build_install
-        ;;
-      11)
         read -r -p "Enter registry repo (e.g., docker.io/username/airline-club-java8): " repo
         read -r -p "Enter tag (default: installed): " tag
         if [[ -z "$tag" ]]; then tag="installed"; fi
@@ -295,7 +288,6 @@ main() {
     analyze)         cmd_analyze "$@" ;;
     logs)            cmd_logs "$@" ;;
     run)             cmd_run "$@" ;;
-    build-install)   cmd_build_install "$@" ;;
     push)            cmd_push "$@" ;;
     *)               usage; exit 1 ;;
   esac
