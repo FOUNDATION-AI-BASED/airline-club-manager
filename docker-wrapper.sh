@@ -12,6 +12,22 @@ PROJECT_DIR_CONTAINER="/workspace/airline-club"
 MANAGER_SCRIPT="airline-club-manager.sh"
 LOG_FILES=("datainit.log" "repair.out" "simulation.log" "webserver.log")
 
+# Cross-platform networking defaults
+OS_NAME="$(uname -s)"
+NETWORK_OPTS=""
+PORT_OPTS=""
+EXTRA_PORTS="${EXTRA_PORTS:-}"
+if [[ "$OS_NAME" == "Darwin" ]]; then
+  # Docker Desktop for macOS does not support --network host
+  NETWORK_OPTS=""
+  # Publish common server ports so you can reach them via localhost
+  PORT_OPTS="-p 9000:9000 -p 7777:7777"
+else
+  # Linux: use host networking so container can access services on 127.0.0.1
+  NETWORK_OPTS="--network host"
+  PORT_OPTS=""
+fi
+
 usage() {
   cat <<EOF
 Usage: $0 <command> [options]
@@ -44,7 +60,8 @@ ensure_started() {
   if ! docker ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
     echo "[INFO] Starting container '$CONTAINER_NAME'..."
     docker run -d --name "$CONTAINER_NAME" \
-      --network host \
+      $NETWORK_OPTS \
+      $PORT_OPTS $EXTRA_PORTS \
       -v "$PROJECT_DIR_HOST":"$PROJECT_DIR_CONTAINER" \
       -w "$PROJECT_DIR_CONTAINER" \
       "$IMAGE_NAME"
@@ -81,7 +98,7 @@ in_container() {
 cmd_menu() {
   ensure_built
   ensure_started
-  docker exec -it "$CONTAINER_NAME" bash -lc "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") menu"
+  docker exec -it "$CONTAINER_NAME" bash -lc "chmod +x ./$(basename \"$MANAGER_SCRIPT\"); JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 PATH=\"\$JAVA_HOME/bin:\$PATH\" ./$(basename \"$MANAGER_SCRIPT\") menu"
 }
 
 cmd_install() {
