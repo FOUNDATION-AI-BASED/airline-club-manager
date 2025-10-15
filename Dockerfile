@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Java 8, basic tools, and mysql-client for optional debugging
+# Install Java 8, basic tools, mysql-server/client for DB inside the container
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       openjdk-8-jdk \
@@ -11,6 +11,7 @@ RUN apt-get update && \
       unzip \
       git \
       ca-certificates \
+      mysql-server \
       mysql-client \
       bash \
       coreutils && \
@@ -22,6 +23,9 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 # Create workspace directory where host folders will be mounted
 RUN mkdir -p /workspace
 WORKDIR /workspace
+
+# Expose MySQL default port (for macOS publishing via docker run)
+EXPOSE 3306
 
 # Default command keeps container alive for exec-based control
 CMD ["bash", "-lc", "sleep infinity"]
