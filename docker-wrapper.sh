@@ -9,6 +9,8 @@ IMAGE_NAME="airline-club-java8"
 CONTAINER_NAME="airline-club-runtime"
 PROJECT_DIR_HOST="${PROJECT_DIR_HOST:-/home/kali/airline-club}"
 PROJECT_DIR_CONTAINER="/workspace/airline-club"
+HOST_TOOLING_DIR="${HOST_TOOLING_DIR:-/home/kali/airline-club-2}"
+TOOLING_DIR_CONTAINER="/workspace/airline-club-2"
 MANAGER_SCRIPT="airline-club-manager.sh"
 LOG_FILES=("datainit.log" "repair.out" "simulation.log" "webserver.log")
 
@@ -44,8 +46,10 @@ Commands:
 
 Env vars:
   PROJECT_DIR_HOST      Host path to airline-club (default: /home/kali/airline-club)
+  HOST_TOOLING_DIR      Host path to airline-club-2 (default: /home/kali/airline-club-2)
   IMAGE_NAME            Docker image name (default: airline-club-java8)
   CONTAINER_NAME        Container name (default: airline-club-runtime)
+  EXTRA_PORTS           Additional -p mappings (macOS only), e.g. "-p 3306:3306"
 EOF
 }
 
@@ -63,7 +67,8 @@ ensure_started() {
       $NETWORK_OPTS \
       $PORT_OPTS $EXTRA_PORTS \
       -v "$PROJECT_DIR_HOST":"$PROJECT_DIR_CONTAINER" \
-      -w "$PROJECT_DIR_CONTAINER" \
+      -v "$HOST_TOOLING_DIR":"$TOOLING_DIR_CONTAINER" \
+      -w "$TOOLING_DIR_CONTAINER" \
       "$IMAGE_NAME"
   fi
 }
