@@ -1,0 +1,123 @@
+/* mobile (portrait) ----------- */
+@media only screen
+and (max-device-width : 640px) {
+    html {
+        --top-bar-background-color : #FFFFFF;
+    }
+    html[data-theme='dark'] {
+        --backdrop-filter: none;
+        --text-color: #DDDDDD;
+        --top-bar-background-color: rgba(0, 0, 0, 0.4);
+    }
+/*and (orientation : portrait or max-device-width : 1024px) {*/
+    .mainPanel, #map {
+        height: 50%;
+        width: 100%;
+    }
+    .mainPanel>div.section, .sidePanel>div.section, .bankCanvasRightGroup>div.section {
+        width: auto !important;
+    }
+
+    .verticalGroup, .sidePanel, #airportDetails>.verticalGroup, .officeCanvasLeftGroup .verticalGroup, #rankingCanvas .verticalGroup, #eventCanvas .verticalGroup, .campaignDetails .verticalGroup,
+    #allianceCanvas .verticalGroup {
+        width: 100%
+    }
+
+    #mainContainer {
+        height: calc(100vh - 40px);
+    }
+
+    #oilPriceChart, #loanInterestRateChart {
+        height: 30vh
+    }
+
+    .moreRow {
+      text-align: center;
+      list-style: none;
+      padding: 0;
+      overflow: hidden;
+      font-size: 12px;
+      position: relative;
+    }
+
+    .moreRow li, .extendedTopBarDetails {
+        background-color: var(--top-bar-background-color);
+    }
+
+    .moreRow li {
+      border: 1px solid #AAA;
+      display: inline-block;
+      position:relative;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      padding: 0 30px;
+      border-top-color: var(--top-bar-background-color);
+    }
+
+    .moreRow li span {
+        display: block;
+        background-color: var(--text-color);
+        width: 20px;
+        height: 2px;
+        border-radius: 2px;
+        margin-bottom: 3px;
+        transition: all 0.3s linear;
+    }
+
+
+    .mobileOnly {
+        visibility: visible;
+        display: unset;
+    }
+
+    .desktopOnly, div.button.desktopOnly {
+        visibility: hidden;
+        display: none;
+    }
+
+    .canvas {
+        padding-left: 5px;
+    }
+
+    .menubar {
+        min-height: 30px;
+        overflow: hidden;
+        width: 100%;
+        z-index: 999;
+        background-image: var(--background-gradient-image);
+    }
+
+
+    #loginDiv input[type="text"], #loginDiv input[type="password"] {
+        width: 100px;
+    }
+
+    .topBarItem, #patreonDiv {
+        margin: 0px 4px;
+    }
+
+    #routeSearchResult {
+        font-size: 2vw;
+    }
+
+    #searchCanvas .search.button {
+        width: 60%;
+    }
+
+    #searchCanvas h2 {
+        font-size: 8vw;
+    }
+
+    #routeSearchResult .ticketTitle, #routeSearchResult .price, #routeSearchResult .summary {
+        font-size: 2.5vw;
+        line-height: 1;
+    }
+}
+
+@media screen and (max-width: 640px),
+       screen and (max-height: 640px) {
+    div.clipContainer {
+        visibility: hidden;
+        display: none;
+    }
+}

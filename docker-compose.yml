@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  airline-club:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: airline-club:v2.2
+    container_name: airline-club-server
+    ports:
+      - "9000:9000"  # Web interface
+      - "3306:3306"  # MariaDB (optional, for external access)
+    volumes:
+      - airline_logs:/app/logs
+      - airline_data:/var/lib/mysql
+    environment:
+      - SBT_OPTS=-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC -Dsbt.log.noformat=true
+      - JAVA_OPTS=-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/airlines"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    networks:
+      - airline-network
+
+volumes:
+  airline_logs:
+    driver: local
+  airline_data:
+    driver: local
+
+networks:
+  airline-network:
+    driver: bridge

@@ -1,0 +1,30 @@
+{
+  "steps": {
+    "create_db": true,
+    "clone_repo": true,
+    "checkout_version": true,
+    "install_jdk": true,
+    "install_sbt": true,
+    "install_mysql": true,
+    "publish_local": true,
+    "init_db_data": true,
+    "set_map_key": false
+  },
+  "config": {
+    "branch": "v2.2",
+    "db_name": "airline_v2_1",
+    "db_user": "sa",
+    "db_pass": "admin",
+    "mysql_root_user": "root",
+    "mysql_root_pass": "root",
+    "web_host": "0.0.0.0",
+    "web_port": 9000,
+    "banner_enabled": false,
+    "use_elasticsearch": true,
+    "elasticsearch_host": "0.0.0.0",
+    "elasticsearch_port": 9200,
+    "trusted_hosts": [
+      "192.168.50.85"
+    ]
+  }
+}

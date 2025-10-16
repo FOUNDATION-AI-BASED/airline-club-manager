@@ -1,0 +1,414 @@
+[info] welcome to sbt 1.9.9 (Ubuntu Java 11.0.28)
+[info] loading project definition from /home/kali/airline-club-manager-test/airline/airline-data/project/project
+[info] loading settings for project airline-data-build from plugins.sbt ...
+[info] loading project definition from /home/kali/airline-club-manager-test/airline/airline-data/project
+[info] loading settings for project airline-data from build.sbt ...
+[info] set current project to airline-data (in build file:/home/kali/airline-club-manager-test/airline/airline-data/)
+[info] running com.patson.MainSimulation 
+!!!!!!!!!!!!!!!DB HOST IS localhost:3306
+!!!!!!!!!!!!!!!FINAL DB str jdbc:mysql://localhost:3306/airline_v2_1?rewriteBatchedStatements=true&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8 with user sa
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+Oct 16, 2025 4:05:28 AM com.mchange.v2.log.MLog 
+INFO: MLog clients using java 1.4+ standard logging.
+Oct 16, 2025 4:05:28 AM com.mchange.v2.c3p0.C3P0Registry 
+INFO: Initializing c3p0-0.9.5.5 [built 11-December-2019 22:18:33 -0800; debug? true; trace: 10]
+Oct 16, 2025 4:05:28 AM com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource 
+INFO: Initializing c3p0 pool... com.mchange.v2.c3p0.ComboPooledDataSource [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, dataSourceName -> z8kfsxbd1t9af4y19v0y6u|ca29a2e, debugUnreturnedConnectionStackTraces -> false, description -> null, driverClass -> null, extensions -> {}, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, forceUseNamedDriverClass -> false, identityToken -> z8kfsxbd1t9af4y19v0y6u|ca29a2e, idleConnectionTestPeriod -> 0, initialPoolSize -> 3, jdbcUrl -> jdbc:mysql://localhost:3306/airline_v2_1?rewriteBatchedStatements=true&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 100, maxStatements -> 0, maxStatementsPerConnection -> 0, minPoolSize -> 3, numHelperThreads -> 3, preferredTestQuery -> null, privilegeSpawnedThreads -> false, properties -> {password=******, user=******}, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> true, unreturnedConnectionTimeout -> 0, userOverrides -> {}, usesTraditionalReflectiveProxies -> false ]
+cycle 0 starting!
+[WARN] [10/16/2025 04:05:29.239] [pool-8-thread-2] [org.apache.pekko.remote.RemoteActorRefProvider] Using the 'remote' ActorRefProvider directly, which is a low-level layer. For most use cases, the 'cluster' abstraction on top of remoting is more suitable instead.
+[WARN] [10/16/2025 04:05:29.242] [pool-8-thread-2] [org.apache.pekko.remote.RemoteActorRefProvider] Pekko Cluster not in use - Using Pekko Cluster is recommended if you need remote watch and deploy.
+[INFO] [10/16/2025 04:05:30.112] [pool-8-thread-2] [ArteryTransport(pekko://websocketActorSystem)] Remoting started with transport [Artery tcp]; listening on address [pekko://websocketActorSystem@127.0.0.1:2552] and bound to [pekko://websocketActorSystem@0.0.0.0:2552] with UID [463533021031323818]
+registered the mainActor to the event stream!
+Bridge actor: received from simulation that com.patson.stream.CycleStart
+Loading airports
+Loaded 3819 airports
+starting resetting strict threshold - active before Tue Sep 16 04:05:49 UTC 2025; and generous threshold - active before Fri Jul 18 04:05:49 UTC 2025
+Event simulation
+Generating Gaussian pool...
+Finished generating pool of 1000000
+Olympics airport(s) within radius: HashMap(Airport(KHI,OPKC,Jinnah International Airport,24.9065,67.160797,PK,Karachi,AS,5,1316,12653301,3400,3217) -> List(Airport(KHI,OPKC,Jinnah International Airport,24.9065,67.160797,PK,Karachi,AS,5,1316,12653301,3400,3217)), Airport(GMP,RKSS,Gimpo International Airport,37.5583,126.791,KR,Seoul,AS,6,27970,8825943,3600,3795) -> List(Airport(GMP,RKSS,Gimpo International Airport,37.5583,126.791,KR,Seoul,AS,6,27970,8825943,3600,3795), Airport(ICN,RKSI,Incheon International Airport,37.46910095214844,126.45099639892578,KR,Seoul,AS,9,27970,13314706,3962,3813)), Airport(LGB,KLGB,Long Beach Airport (Daugherty Field),33.817699,-118.152,US,Long Beach,NA,5,54629,1936014,3048,3733) -> List(Airport(BUR,KBUR,Bob Hope Airport,34.20069885253906,-118.35900115966797,US,Burbank,NA,2,54629,284336,2098,3184), Airport(SNA,KSNA,John Wayne Airport-Orange County Airport,33.67570114,-117.8679962,US,Santa Ana,NA,3,54629,545622,1737,3456), Airport(LGB,KLGB,Long Beach Airport (Daugherty Field),33.817699,-118.152,US,Long Beach,NA,5,54629,1936014,3048,3733), Airport(ONT,KONT,Ontario International Airport,34.055999755859375,-117.60099792480469,US,Ontario,NA,6,54629,2219450,3717,3747), Airport(LAX,KLAX,Los Angeles International Airport,33.942501,-118.407997,US,Los Angeles,NA,9,54629,6091381,3685,3807)), Airport(BEY,OLBA,Beirut Rafic Hariri International Airport,33.820899963378906,35.488399505615234,LB,Beirut,AS,6,10057,3022511,3800,3461) -> List(Airport(BEY,OLBA,Beirut Rafic Hariri International Airport,33.820899963378906,35.488399505615234,LB,Beirut,AS,6,10057,3022511,3800,3461)), Airport(DME,UUDD,Domodedovo International Airport,55.40879821777344,37.90629959106445,RU,Moscow,EU,7,12735,7274934,3794,3712) -> List(Airport(OSF,UUMO,Ostafyevo International Airport,55.511667,37.507222,RU,Moscow,EU,2,12735,528269,2050,2774), Airport(ZIA,UUBW,Zhukovsky International Airport,55.553299,38.150002,RU,Moscow,EU,3,12735,1468392,4600,3273), Airport(VKO,UUWW,Vnukovo International Airport,55.5914993286,37.2615013123,RU,Moscow,EU,6,12735,5301452,3500,3654), Airport(DME,UUDD,Domodedovo International Airport,55.40879821777344,37.90629959106445,RU,Moscow,EU,7,12735,7274934,3794,3712), Airport(SVO,UUEE,Sheremetyevo International Airport,55.972599,37.4146,RU,Moscow,EU,7,12735,7757316,3700,3721)), Airport(BOG,SKBO,El Dorado International Airport,4.70159,-74.1469,CO,Bogota,SA,6,7903,9504083,3800,3676) -> List(Airport(BOG,SKBO,El Dorado International Airport,4.70159,-74.1469,CO,Bogota,SA,6,7903,9504083,3800,3676)))
+Loading all links
+Finished loading all links
+DONE with demand total demand: 43033315
+Total active airports: 696
+Remove demand that is not covered by active airports, before 5062527
+After pruning : 79185
+Simple Cost modifiers Map()
+Run 0 demand chunk count 79185
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 7702
+Iteration count : 4
+..........10% ..........20% ..........30% ..........40% ..........50% ..........60% ..........70% ..........80% ..........90% ..........100% Done!
+Run 1 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 4
+Done!
+Run 2 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 4
+Done!
+Run 3 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 4 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 5 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 6 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 7 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 8 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 9 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Total chunks that consume something 0
+Total missed chunks 5062527
+Total transported pax 0
+Total missed pax 43033315
+Collapsed consumption map size: 0
+Exception in thread "pool-8-thread-2" [warn] In the last 10 seconds, 7.934 (79.6%) were spent in GC. [Heap: 0.01GB free of 1.00GB, max 1.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.util.Arrays.copyOf(Arrays.java:3689)
+	at scala.collection.mutable.HashMap.growTable(HashMap.scala:383)
+	at scala.collection.mutable.HashMap.getOrElseUpdate(HashMap.scala:470)
+	at scala.collection.IterableOps.groupBy(Iterable.scala:561)
+	at scala.collection.IterableOps.groupBy$(Iterable.scala:555)
+	at scala.collection.AbstractIterable.groupBy(Iterable.scala:933)
+	at com.patson.PassengerSimulation$.passengerConsume(PassengerSimulation.scala:236)
+	at com.patson.LinkSimulation$.linkSimulation(LinkSimulation.scala:57)
+	at com.patson.MainSimulation$.startCycle(MainSimulation.scala:61)
+	at com.patson.MainSimulation$MainSimulationActor$$anonfun$receive$1.applyOrElse(MainSimulation.scala:133)
+	at org.apache.pekko.actor.Actor.aroundReceive(Actor.scala:547)
+	at org.apache.pekko.actor.Actor.aroundReceive$(Actor.scala:545)
+	at com.patson.MainSimulation$MainSimulationActor.aroundReceive(MainSimulation.scala:128)
+	at org.apache.pekko.actor.ActorCell.receiveMessage(ActorCell.scala:590)
+	at org.apache.pekko.actor.ActorCell.invoke(ActorCell.scala:557)
+	at org.apache.pekko.dispatch.Mailbox.processMailbox(Mailbox.scala:280)
+	at org.apache.pekko.dispatch.Mailbox.run(Mailbox.scala:241)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+[WARN] [10/16/2025 04:10:55.504] [Thread-6] [CoordinatedShutdown(pekko://websocketActorSystem)] Could not addJvmShutdownHook, due to: Shutdown in progress
+[info] welcome to sbt 1.9.9 (Ubuntu Java 11.0.28)
+[info] loading project definition from /home/kali/airline-club-manager-test/airline/airline-data/project/project
+[info] loading settings for project airline-data-build from plugins.sbt ...
+[info] loading project definition from /home/kali/airline-club-manager-test/airline/airline-data/project
+[info] loading settings for project airline-data from build.sbt ...
+[info] set current project to airline-data (in build file:/home/kali/airline-club-manager-test/airline/airline-data/)
+[info] running com.patson.MainSimulation 
+!!!!!!!!!!!!!!!DB HOST IS localhost:3306
+!!!!!!!!!!!!!!!FINAL DB str jdbc:mysql://localhost:3306/airline_v2_1?rewriteBatchedStatements=true&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8 with user sa
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+Oct 16, 2025 4:15:46 AM com.mchange.v2.log.MLog 
+INFO: MLog clients using java 1.4+ standard logging.
+Oct 16, 2025 4:15:46 AM com.mchange.v2.c3p0.C3P0Registry 
+INFO: Initializing c3p0-0.9.5.5 [built 11-December-2019 22:18:33 -0800; debug? true; trace: 10]
+Oct 16, 2025 4:15:47 AM com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource 
+INFO: Initializing c3p0 pool... com.mchange.v2.c3p0.ComboPooledDataSource [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, dataSourceName -> z8kfsxbd1t9no6pe9q2y7|7c055cf, debugUnreturnedConnectionStackTraces -> false, description -> null, driverClass -> null, extensions -> {}, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, forceUseNamedDriverClass -> false, identityToken -> z8kfsxbd1t9no6pe9q2y7|7c055cf, idleConnectionTestPeriod -> 0, initialPoolSize -> 3, jdbcUrl -> jdbc:mysql://localhost:3306/airline_v2_1?rewriteBatchedStatements=true&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 100, maxStatements -> 0, maxStatementsPerConnection -> 0, minPoolSize -> 3, numHelperThreads -> 3, preferredTestQuery -> null, privilegeSpawnedThreads -> false, properties -> {password=******, user=******}, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> true, unreturnedConnectionTimeout -> 0, userOverrides -> {}, usesTraditionalReflectiveProxies -> false ]
+cycle 0 starting!
+Generating Gaussian pool...
+[info] welcome to sbt 1.9.9 (Ubuntu Java 11.0.28)
+Finished generating pool of 1000000
+ pv 0.0 pp 70.0 v -2.1408806114784933 p 67.8591193885215
+Interest rate simulation [previous rate : 0.12, new rate : 0.12]
+[WARN] [10/16/2025 04:15:51.183] [pool-8-thread-1] [org.apache.pekko.remote.RemoteActorRefProvider] Using the 'remote' ActorRefProvider directly, which is a low-level layer. For most use cases, the 'cluster' abstraction on top of remoting is more suitable instead.
+[WARN] [10/16/2025 04:15:51.185] [pool-8-thread-1] [org.apache.pekko.remote.RemoteActorRefProvider] Pekko Cluster not in use - Using Pekko Cluster is recommended if you need remote watch and deploy.
+[info] loading project definition from /home/kali/airline-club-manager-test/airline/airline-data/project/project
+[INFO] [10/16/2025 04:15:52.752] [pool-8-thread-1] [ArteryTransport(pekko://websocketActorSystem)] Remoting started with transport [Artery tcp]; listening on address [pekko://websocketActorSystem@127.0.0.1:2552] and bound to [pekko://websocketActorSystem@0.0.0.0:2552] with UID [7693834069423673240]
+registered the mainActor to the event stream!
+Bridge actor: received from simulation that com.patson.stream.CycleStart
+Loading airports
+[info] loading settings for project airline-data-build from plugins.sbt ...
+[info] loading project definition from /home/kali/airline-club-manager-test/airline/airline-data/project
+[info] loading settings for project airline-data from build.sbt ...
+[info] set current project to airline-data (in build file:/home/kali/airline-club-manager-test/airline/airline-data/)
+[info] running com.patson.MainSimulation 
+!!!!!!!!!!!!!!!DB HOST IS localhost:3306
+!!!!!!!!!!!!!!!FINAL DB str jdbc:mysql://localhost:3306/airline_v2_1?rewriteBatchedStatements=true&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8 with user sa
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+Oct 16, 2025 4:16:03 AM com.mchange.v2.log.MLog 
+INFO: MLog clients using java 1.4+ standard logging.
+Oct 16, 2025 4:16:04 AM com.mchange.v2.c3p0.C3P0Registry 
+INFO: Initializing c3p0-0.9.5.5 [built 11-December-2019 22:18:33 -0800; debug? true; trace: 10]
+Oct 16, 2025 4:16:04 AM com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource 
+INFO: Initializing c3p0 pool... com.mchange.v2.c3p0.ComboPooledDataSource [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, dataSourceName -> z8kfsxbd1t9o1vw1x3bnfj|49ea2ade, debugUnreturnedConnectionStackTraces -> false, description -> null, driverClass -> null, extensions -> {}, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, forceUseNamedDriverClass -> false, identityToken -> z8kfsxbd1t9o1vw1x3bnfj|49ea2ade, idleConnectionTestPeriod -> 0, initialPoolSize -> 3, jdbcUrl -> jdbc:mysql://localhost:3306/airline_v2_1?rewriteBatchedStatements=true&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 100, maxStatements -> 0, maxStatementsPerConnection -> 0, minPoolSize -> 3, numHelperThreads -> 3, preferredTestQuery -> null, privilegeSpawnedThreads -> false, properties -> {password=******, user=******}, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> true, unreturnedConnectionTimeout -> 0, userOverrides -> {}, usesTraditionalReflectiveProxies -> false ]
+cycle 0 starting!
+Generating Gaussian pool...
+Finished generating pool of 1000000
+ pv 0.0 pp 67.86 v -0.0396172428860523 p 67.82038275711395
+Interest rate simulation [previous rate : 0.12, new rate : 0.12]
+[WARN] [10/16/2025 04:16:08.255] [pool-8-thread-1] [org.apache.pekko.remote.RemoteActorRefProvider] Using the 'remote' ActorRefProvider directly, which is a low-level layer. For most use cases, the 'cluster' abstraction on top of remoting is more suitable instead.
+[WARN] [10/16/2025 04:16:08.260] [pool-8-thread-1] [org.apache.pekko.remote.RemoteActorRefProvider] Pekko Cluster not in use - Using Pekko Cluster is recommended if you need remote watch and deploy.
+[ERROR] [10/16/2025 04:16:09.555] [websocketActorSystem-pekko.actor.internal-dispatcher-5] [pekko://websocketActorSystem/system/IO-TCP/selectors/$a/0] Bind failed for TCP channel on endpoint [/0.0.0.0:2552]
+java.net.BindException: [/0.0.0.0:2552] Address already in use
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.Net.bind(Net.java:459)
+	at java.base/sun.nio.ch.Net.bind(Net.java:448)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:227)
+	at java.base/sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:80)
+	at org.apache.pekko.io.TcpListener.liftedTree1$1(TcpListener.scala:70)
+	at org.apache.pekko.io.TcpListener.<init>(TcpListener.scala:67)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+	at org.apache.pekko.util.Reflect$.instantiate(Reflect.scala:82)
+	at org.apache.pekko.actor.ArgsReflectConstructor.produce(IndirectActorProducer.scala:111)
+	at org.apache.pekko.actor.Props.newActor(Props.scala:236)
+	at org.apache.pekko.actor.ActorCell.newActor(ActorCell.scala:626)
+	at org.apache.pekko.actor.ActorCell.create(ActorCell.scala:653)
+	at org.apache.pekko.actor.ActorCell.invokeAll$1(ActorCell.scala:523)
+	at org.apache.pekko.actor.ActorCell.systemInvoke(ActorCell.scala:545)
+	at org.apache.pekko.dispatch.Mailbox.processAllSystemMessages(Mailbox.scala:305)
+	at org.apache.pekko.dispatch.Mailbox.run(Mailbox.scala:240)
+	at org.apache.pekko.dispatch.Mailbox.exec(Mailbox.scala:253)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:290)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1020)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1656)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1594)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183)
+
+[INFO] [10/16/2025 04:16:09.673] [pool-8-thread-1] [CoordinatedShutdown(pekko://websocketActorSystem)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+[INFO] [10/16/2025 04:16:09.693] [websocketActorSystem-pekko.remote.default-remote-dispatcher-9] [pekko://websocketActorSystem/system/remoting-terminator] Shutting down remote daemon.
+[INFO] [10/16/2025 04:16:09.697] [websocketActorSystem-pekko.remote.default-remote-dispatcher-9] [pekko://websocketActorSystem/system/remoting-terminator] Remote daemon shut down; proceeding with flushing remote transports.
+Exception in thread "pool-8-thread-1" java.lang.ExceptionInInitializerError
+	at com.patson.MainSimulation$.startCycle(MainSimulation.scala:50)
+	at com.patson.MainSimulation$MainSimulationActor$$anonfun$receive$1.applyOrElse(MainSimulation.scala:133)
+	at org.apache.pekko.actor.Actor.aroundReceive(Actor.scala:547)
+	at org.apache.pekko.actor.Actor.aroundReceive$(Actor.scala:545)
+	at com.patson.MainSimulation$MainSimulationActor.aroundReceive(MainSimulation.scala:128)
+	at org.apache.pekko.actor.ActorCell.receiveMessage(ActorCell.scala:590)
+	at org.apache.pekko.actor.ActorCell.invoke(ActorCell.scala:557)
+	at org.apache.pekko.dispatch.Mailbox.processMailbox(Mailbox.scala:280)
+	at org.apache.pekko.dispatch.Mailbox.run(Mailbox.scala:241)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: org.apache.pekko.remote.RemoteTransportException: Failed to bind TCP to [0.0.0.0:2552] due to: Bind failed because of java.net.BindException: [/0.0.0.0:2552] Address already in use
+	at org.apache.pekko.remote.artery.tcp.ArteryTcpTransport$$anonfun$4.applyOrElse(ArteryTcpTransport.scala:283)
+	at org.apache.pekko.remote.artery.tcp.ArteryTcpTransport$$anonfun$4.applyOrElse(ArteryTcpTransport.scala:277)
+	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:490)
+	at scala.concurrent.ExecutionContext$parasitic$.execute(ExecutionContext.scala:222)
+	at scala.concurrent.impl.Promise$Transformation.submitWithValue(Promise.scala:429)
+	at scala.concurrent.impl.Promise$DefaultPromise.submitWithValue(Promise.scala:338)
+	at scala.concurrent.impl.Promise$DefaultPromise.tryComplete0(Promise.scala:285)
+	at scala.concurrent.impl.Promise$DefaultPromise.tryComplete(Promise.scala:278)
+	at scala.concurrent.Promise.complete(Promise.scala:57)
+	at scala.concurrent.Promise.complete$(Promise.scala:56)
+	at scala.concurrent.impl.Promise$DefaultPromise.complete(Promise.scala:104)
+	at scala.concurrent.Promise.failure(Promise.scala:109)
+	at scala.concurrent.Promise.failure$(Promise.scala:109)
+	at scala.concurrent.impl.Promise$DefaultPromise.failure(Promise.scala:104)
+	at org.apache.pekko.stream.impl.io.ConnectionSourceStage$$anon$1.receive(TcpStages.scala:108)
+	at org.apache.pekko.stream.impl.io.ConnectionSourceStage$$anon$1.$anonfun$preStart$1(TcpStages.scala:78)
+	at org.apache.pekko.stream.impl.io.ConnectionSourceStage$$anon$1.$anonfun$preStart$1$adapted(TcpStages.scala:78)
+	at org.apache.pekko.stream.stage.GraphStageLogic$StageActor.internalReceive(GraphStage.scala:250)
+	at org.apache.pekko.stream.stage.GraphStageLogic$StageActor.$anonfun$callback$1(GraphStage.scala:211)
+	at org.apache.pekko.stream.stage.GraphStageLogic$StageActor.$anonfun$callback$1$adapted(GraphStage.scala:211)
+	at org.apache.pekko.stream.impl.fusing.GraphInterpreter.runAsyncInput(GraphInterpreter.scala:477)
+	at org.apache.pekko.stream.impl.fusing.GraphInterpreterShell$AsyncInput.execute(ActorGraphInterpreter.scala:528)
+	at org.apache.pekko.stream.impl.fusing.GraphInterpreterShell.processEvent(ActorGraphInterpreter.scala:637)
+	at org.apache.pekko.stream.impl.fusing.ActorGraphInterpreter.org$apache$pekko$stream$impl$fusing$ActorGraphInterpreter$$processEvent(ActorGraphInterpreter.scala:813)
+	at org.apache.pekko.stream.impl.fusing.ActorGraphInterpreter$$anonfun$receive$1.applyOrElse(ActorGraphInterpreter.scala:831)
+	at org.apache.pekko.actor.Actor.aroundReceive(Actor.scala:547)
+	at org.apache.pekko.actor.Actor.aroundReceive$(Actor.scala:545)
+	at org.apache.pekko.stream.impl.fusing.ActorGraphInterpreter.aroundReceive(ActorGraphInterpreter.scala:729)
+	at org.apache.pekko.actor.ActorCell.receiveMessage(ActorCell.scala:590)
+	at org.apache.pekko.actor.ActorCell.invoke(ActorCell.scala:557)
+	at org.apache.pekko.dispatch.Mailbox.processMailbox(Mailbox.scala:280)
+	at org.apache.pekko.dispatch.Mailbox.run(Mailbox.scala:241)
+	at org.apache.pekko.dispatch.Mailbox.exec(Mailbox.scala:253)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:290)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1020)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1656)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1594)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183)
+Caused by: org.apache.pekko.stream.impl.io.ConnectionSourceStage$$anon$1$$anon$2: Bind failed because of java.net.BindException: [/0.0.0.0:2552] Address already in use
+Caused by: java.net.BindException: [/0.0.0.0:2552] Address already in use
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.Net.bind(Net.java:459)
+	at java.base/sun.nio.ch.Net.bind(Net.java:448)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:227)
+	at java.base/sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:80)
+	at org.apache.pekko.io.TcpListener.liftedTree1$1(TcpListener.scala:70)
+	at org.apache.pekko.io.TcpListener.<init>(TcpListener.scala:67)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+	at org.apache.pekko.util.Reflect$.instantiate(Reflect.scala:82)
+	at org.apache.pekko.actor.ArgsReflectConstructor.produce(IndirectActorProducer.scala:111)
+	at org.apache.pekko.actor.Props.newActor(Props.scala:236)
+	at org.apache.pekko.actor.ActorCell.newActor(ActorCell.scala:626)
+	at org.apache.pekko.actor.ActorCell.create(ActorCell.scala:653)
+	at org.apache.pekko.actor.ActorCell.invokeAll$1(ActorCell.scala:523)
+	at org.apache.pekko.actor.ActorCell.systemInvoke(ActorCell.scala:545)
+	at org.apache.pekko.dispatch.Mailbox.processAllSystemMessages(Mailbox.scala:305)
+	at org.apache.pekko.dispatch.Mailbox.run(Mailbox.scala:240)
+	at org.apache.pekko.dispatch.Mailbox.exec(Mailbox.scala:253)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:290)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1020)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1656)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1594)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183)
+[INFO] [10/16/2025 04:16:09.825] [websocketActorSystem-pekko.remote.default-remote-dispatcher-7] [pekko://websocketActorSystem/system/remoting-terminator] Remoting shut down.
+Loaded 3819 airports
+starting resetting strict threshold - active before Tue Sep 16 04:16:12 UTC 2025; and generous threshold - active before Fri Jul 18 04:16:12 UTC 2025
+Event simulation
+Olympics airport(s) within radius: HashMap(Airport(KIX,RJBB,Kansai International Airport,34.42729949951172,135.24400329589844,JP,Osaka,AS,7,36194,7425755,4000,3798) -> List(Airport(TKS,RJOS,Tokushima Awaodori Airport / JMSDF Tokushima Air Base,34.132801,134.606995,JP,Tokushima,AS,2,36194,244639,2000,2925), Airport(UKB,RJBE,Kobe Airport,34.6328010559082,135.2239990234375,JP,Kobe,AS,3,36194,1579798,2500,3627), Airport(KIX,RJBB,Kansai International Airport,34.42729949951172,135.24400329589844,JP,Osaka,AS,7,36194,7425755,4000,3798), Airport(ITM,RJOO,Osaka International Airport,34.785499572753906,135.43800354003906,JP,Osaka,AS,7,36194,9884655,3000,3811)), Airport(CBB,SLCB,Jorge Wilsterman International Airport,-17.421100616455078,-66.1771011352539,BO,Cochabamba,SA,5,3124,1322772,3797,2488) -> List(Airport(CBB,SLCB,Jorge Wilsterman International Airport,-17.421100616455078,-66.1771011352539,BO,Cochabamba,SA,5,3124,1322772,3797,2488)), Airport(VRA,MUVR,Juan Gualberto Gomez International Airport,23.034400939941406,-81.435302734375,CU,Varadero,NA,6,6789,1408689,3502,2965) -> List(Airport(VRA,MUVR,Juan Gualberto Gomez International Airport,23.034400939941406,-81.435302734375,CU,Varadero,NA,6,6789,1408689,3502,2965)), Airport(PVR,MMPR,Licenciado Gustavo Díaz Ordaz International Airport,20.680099487304688,-105.25399780273438,MX,Puerto Vallarta,NA,6,10325,1220091,3100,3104) -> List(Airport(PVR,MMPR,Licenciado Gustavo Díaz Ordaz International Airport,20.680099487304688,-105.25399780273438,MX,Puerto Vallarta,NA,6,10325,1220091,3100,3104)), Airport(ACC,DGAA,Kotoka International Airport,5.605189800262451,-0.16678600013256073,GH,Accra,AF,6,1441,4234588,3403,2719) -> List(Airport(ACC,DGAA,Kotoka International Airport,5.605189800262451,-0.16678600013256073,GH,Accra,AF,6,1441,4234588,3403,2719)), Airport(SEA,KSEA,Seattle Tacoma International Airport,47.449001,-122.308998,US,Seattle,NA,7,54629,1340750,3627,3669) -> List(Airport(BFI,KBFI,Boeing Field King County International Airport,47.529998779296875,-122.302001953125,US,Seattle,NA,3,54629,245621,3050,3122), Airport(SEA,KSEA,Seattle Tacoma International Airport,47.449001,-122.308998,US,Seattle,NA,7,54629,1340750,3627,3669)))
+Loading all links
+Finished loading all links
+DONE with demand total demand: 43033315
+Total active airports: 696
+Remove demand that is not covered by active airports, before 5062362
+After pruning : 79164
+Simple Cost modifiers Map()
+Run 0 demand chunk count 79164
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 7721
+Iteration count : 4
+..........10% ..........20% ..........30% ..........40% ..........50% ..........60% ..........70% ..........80% ..........90% ..........100% Done!
+Run 1 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 4
+Done!
+Run 2 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 4
+Done!
+Run 3 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 4 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 5 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 6 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 7 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 8 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 9 demand chunk count 0
+links: 493
+Find required routes...Done!
+Available links: 493
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Total chunks that consume something 0
+Total missed chunks 5062362
+Total transported pax 0
+Total missed pax 43033315
+Collapsed consumption map size: 0
+Exception in thread "pool-8-thread-1" java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.util.Arrays.copyOf(Arrays.java:3689)
+	at scala.collection.mutable.HashMap.growTable(HashMap.scala:383)
+	at scala.collection.mutable.HashMap.getOrElseUpdate(HashMap.scala:470)
+	at scala.collection.IterableOps.groupBy(Iterable.scala:561)
+	at scala.collection.IterableOps.groupBy$(Iterable.scala:555)
+	at scala.collection.AbstractIterable.groupBy(Iterable.scala:933)
+	at com.patson.PassengerSimulation$.passengerConsume(PassengerSimulation.scala:236)
+	at com.patson.LinkSimulation$.linkSimulation(LinkSimulation.scala:45)
+	at com.patson.MainSimulation$.startCycle(MainSimulation.scala:61)
+	at com.patson.MainSimulation$MainSimulationActor$$anonfun$receive$1.applyOrElse(MainSimulation.scala:133)
+	at org.apache.pekko.actor.Actor.aroundReceive(Actor.scala:547)
+	at org.apache.pekko.actor.Actor.aroundReceive$(Actor.scala:545)
+	at com.patson.MainSimulation$MainSimulationActor.aroundReceive(MainSimulation.scala:128)
+	at org.apache.pekko.actor.ActorCell.receiveMessage(ActorCell.scala:590)
+	at org.apache.pekko.actor.ActorCell.invoke(ActorCell.scala:557)
+	at org.apache.pekko.dispatch.Mailbox.processMailbox(Mailbox.scala:280)
+	at org.apache.pekko.dispatch.Mailbox.run(Mailbox.scala:241)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+[warn] In the last 10 seconds, 7.863 (80.2%) were spent in GC. [Heap: 0.01GB free of 1.00GB, max 1.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.

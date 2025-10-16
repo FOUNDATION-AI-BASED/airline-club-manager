@@ -1,0 +1,57 @@
+[info] welcome to sbt 1.9.9 (Ubuntu Java 11.0.28)
+[info] loading settings for project airline-web-build from plugins.sbt ...
+[info] loading project definition from /home/kali/airline-club-manager-test/airline/airline-web/project
+[info] loading settings for project root from build.sbt ...
+[info]   __              __
+[info]   \ \     ____   / /____ _ __  __
+[info]    \ \   / __ \ / // __ `// / / /
+[info]    / /  / /_/ // // /_/ // /_/ /
+[info]   /_/  / .___//_/ \__,_/ \__, /
+[info]       /_/               /____/
+[info] 
+[info] Version 3.0.5 running Java 11.0.28
+[info] 
+[info] Play is run entirely by the community. Please consider contributing and/or donating:
+[info] https://www.playframework.com/sponsors
+[info] 
+
+[35m--- (Running the application, auto-reloading is enabled) ---[0m
+
+[34mINFO [0;39m p.c.s.PekkoHttpServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+[32m(Server started, use Enter to stop and go back to the console...)[0m
+
+[34mINFO [0;39m p.c.s.PekkoHttpServer - Stopping Pekko HTTP server...
+[34mINFO [0;39m p.c.s.PekkoHttpServer - Unbinding /0:0:0:0:0:0:0:0:9000
+[34mINFO [0;39m p.c.s.PekkoHttpServer - Terminating server binding for /0:0:0:0:0:0:0:0:9000
+[34mINFO [0;39m p.c.s.PekkoHttpServer - Running provided shutdown stop hooks
+[info] welcome to sbt 1.9.9 (Ubuntu Java 11.0.28)
+[info] loading settings for project airline-web-build from plugins.sbt ...
+[info] loading project definition from /home/kali/airline-club-manager-test/airline/airline-web/project
+[info] loading settings for project root from build.sbt ...
+[info]   __              __
+[info]   \ \     ____   / /____ _ __  __
+[info]    \ \   / __ \ / // __ `// / / /
+[info]    / /  / /_/ // // /_/ // /_/ /
+[info]   /_/  / .___//_/ \__,_/ \__, /
+[info]       /_/               /____/
+[info] 
+[info] Version 3.0.5 running Java 11.0.28
+[info] 
+[info] Play is run entirely by the community. Please consider contributing and/or donating:
+[info] https://www.playframework.com/sponsors
+[info] 
+
+[35m--- (Running the application, auto-reloading is enabled) ---[0m
+
+[34mINFO [0;39m p.c.s.PekkoHttpServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+[32m(Server started, use Enter to stop and go back to the console...)[0m
+
+Exception in thread "Thread-5661" java.io.IOException: Input/output error
+	at java.base/java.io.FileInputStream.readBytes(Native Method)
+	at java.base/java.io.FileInputStream.read(FileInputStream.java:279)
+	at java.base/java.io.BufferedInputStream.fill(BufferedInputStream.java:252)
+	at java.base/java.io.BufferedInputStream.read(BufferedInputStream.java:271)
+	at sbt.internal.util.Terminal$proxyInputStream$ReadThread.readFrom$1(Terminal.scala:692)
+	at sbt.internal.util.Terminal$proxyInputStream$ReadThread.run(Terminal.scala:706)
