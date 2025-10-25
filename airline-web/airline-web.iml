@@ -57,7 +57,7 @@
     <libelement value="jar://$USER_HOME$/.ivy2/cache/com.google.protobuf/protobuf-java/bundles/protobuf-java-2.5.0.jar!/" />
     <libelement value="jar://$USER_HOME$/.ivy2/cache/org.uncommons.maths/uncommons-maths/jars/uncommons-maths-1.2.2a.jar!/" />
     <libelement value="jar://$USER_HOME$/.ivy2/local/default/airline-data_2.11/1.1-SNAPSHOT/jars/airline-data_2.11.jar!/" />
-    <libelement value="jar://$USER_HOME$/.ivy2/cache/mysql/mysql-connector-java/jars/mysql-connector-java-5.1.38.jar!/" />
+    <libelement value="jar://$USER_HOME$/.ivy2/cache/mysql/mysql-connector-java/jars/mysql-connector-java-8.1.0.jar!/" />
     <libelement value="jar://$USER_HOME$/.ivy2/cache/com.mchange/c3p0/jars/c3p0-0.9.5.jar!/" />
     <libelement value="jar://$USER_HOME$/.ivy2/cache/com.mchange/mchange-commons-java/jars/mchange-commons-java-0.2.9.jar!/" />
     <libelement value="jar://$USER_HOME$/.ivy2/cache/com.typesafe.akka/akka-stream-experimental_2.11/jars/akka-stream-experimental_2.11-0.10.jar!/" />
@@ -277,7 +277,7 @@
     <orderEntry type="library" name="sbt: javax.xml.bind:jaxb-api:2.3.1:jar" level="project" />
     <orderEntry type="library" name="sbt: joda-time:joda-time:2.10.4:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: junit:junit:4.12:jar" level="project" />
-    <orderEntry type="library" name="sbt: mysql:mysql-connector-java:5.1.49:jar" level="project" />
+    <orderEntry type="library" name="sbt: mysql:mysql-connector-java:8.1.0:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: net.bytebuddy:byte-buddy-agent:1.9.3:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: net.bytebuddy:byte-buddy:1.9.3:jar" level="project" />
     <orderEntry type="library" name="sbt: net.sf.jopt-simple:jopt-simple:5.0.2:jar" level="project" />

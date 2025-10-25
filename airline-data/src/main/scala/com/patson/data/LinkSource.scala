@@ -1,5 +1,5 @@
 package com.patson.data
-import java.sql.{Connection, Statement, Types}
+import java.sql.{Connection, Statement, Types, ResultSet}
 import java.util.{Calendar, Date}
 import com.patson.data.Constants._
 import com.patson.data.LinkSource.DetailType
@@ -65,7 +65,7 @@ object LinkSource {
     val connection = Meta.getConnection()
     
     try {  
-      val preparedStatement = connection.prepareStatement(queryString)
+      val preparedStatement = connection.prepareStatement(queryString, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
       
       for (i <- 0 until parameters.size) {
         preparedStatement.setObject(i + 1, parameters(i))
@@ -240,7 +240,7 @@ object LinkSource {
       }
       
       queryString.append("?)")
-      val linkAssignmentStatement = connection.prepareStatement(queryString.toString)
+      val linkAssignmentStatement = connection.prepareStatement(queryString.toString, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
       for (i <- 0 until linkIds.size) {
         linkAssignmentStatement.setInt(i + 1, linkIds(i))
       }

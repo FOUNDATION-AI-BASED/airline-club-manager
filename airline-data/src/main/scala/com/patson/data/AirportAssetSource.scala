@@ -5,7 +5,7 @@ import com.patson.model.AirportAssetType.SkiResortAssetType
 import com.patson.model.{AirlineAppeal, _}
 import com.patson.util.{AirlineCache, AirportCache, AirportChampionInfo}
 
-import java.sql.{Statement, Types}
+import java.sql.{Statement, Types, ResultSet}
 import scala.collection.mutable.ListBuffer
 import scala.collection.{immutable, mutable}
 
@@ -51,7 +51,7 @@ object AirportAssetSource {
   private[this] def loadAirportAssetsByAssetQueryString(queryString : String, parameters : List[Any]) = {
     val connection = Meta.getConnection()
     try {
-      val preparedStatement = connection.prepareStatement(queryString)
+      val preparedStatement = connection.prepareStatement(queryString, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
 
       for (i <- 0 until parameters.size) {
         preparedStatement.setObject(i + 1, parameters(i))
@@ -116,7 +116,7 @@ object AirportAssetSource {
         queryString += criteria.last._1 + " = ?"
       }
 
-      val preparedStatement = connection.prepareStatement(queryString)
+      val preparedStatement = connection.prepareStatement(queryString, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
 
       for (i <- 0 until criteria.size) {
         preparedStatement.setObject(i + 1, criteria(i)._2)

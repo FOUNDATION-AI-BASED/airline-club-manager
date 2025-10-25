@@ -1,226 +1,697 @@
-#!/usr/bin/env bash
-# Airline Manager Shell Wrapper
-# - Ensures a suitable Python3 is installed
-# - Creates/uses a virtualenv
-# - Delegates install/start/stop/config actions to airline_manager.py (non-interactive)
-# - Provides a friendly interactive menu for non-technical users
+#!/bin/bash
 
-set -o pipefail
+# Automatic path detection
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+AIRLINE_DATA_PATH=$(find "$SCRIPT_DIR" -type d -name "airline-data" | head -n 1)
+AIRLINE_WEB_PATH=$(find "$SCRIPT_DIR" -type d -name "airline-web" | head -n 1)
+CGROUP_NAME="airline_sbt_limit"
 
-PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
-AIRLINE_MANAGER="$PROJECT_ROOT/airline_manager.py"
-VENV_DIR="$PROJECT_ROOT/.venv"
-LOG_DIR="$PROJECT_ROOT/logs"
+# Resource limits configuration
+MAX_MEMORY_MB=3072  # 3GB max per service (increased from 2GB)
+MAX_CPU_RATIO=0.85  # Use 85% of available CPU cores (increased from 75%)
+MAX_PROCESSES=500   # Maximum processes per service (increased from 200)
+SSH_KEEPALIVE_INTERVAL=30  # SSH keepalive seconds
 
-# Detect sudo availability
-if [ "$EUID" -ne 0 ]; then
-  if command -v sudo >/dev/null 2>&1; then
-    SUDO="sudo"
-  else
-    SUDO=""
-  fi
-else
-  SUDO=""
+# Calculate dynamic CPU cores based on system availability
+SYSTEM_CPU_CORES=$(nproc)
+MAX_CPU_CORES=$(echo "$SYSTEM_CPU_CORES * $MAX_CPU_RATIO" | bc -l 2>/dev/null || echo "2")
+if [ -z "$MAX_CPU_CORES" ] || [ "$MAX_CPU_CORES" = "0" ]; then
+    MAX_CPU_CORES=2  # Fallback to 2 cores if calculation fails
 fi
 
-# Basic colors for nicer UI (fallback to empty if tput unavailable)
-if command -v tput >/dev/null 2>&1; then
-  C_RESET="$(tput sgr0)"
-  C_BOLD="$(tput bold)"
-  C_BLUE="$(tput setaf 4)"
-  C_GREEN="$(tput setaf 2)"
-  C_YELLOW="$(tput setaf 3)"
-  C_RED="$(tput setaf 1)"
-else
-  C_RESET=""; C_BOLD=""; C_BLUE=""; C_GREEN=""; C_YELLOW=""; C_RED="";
-fi
-
-ensure_dirs() {
-  mkdir -p "$LOG_DIR"
-}
-
-# Return 0 (true) if $1 >= $2 in version sense, else return 1 (false)
-version_ge() {
-  local a="$1" b="$2"
-  local first
-  first="$(printf "%s\n%s" "$a" "$b" | sort -V | head -n1)"
-  if [ "$first" = "$b" ]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-current_py_version() {
-  python3 -V 2>/dev/null | awk '{print $2}'
-}
-
-install_python() {
-  echo "Attempting to install Python3, pip, and venv using the system package manager..."
-  if command -v apt-get >/dev/null 2>&1; then
-    $SUDO apt-get update -y || true
-    $SUDO apt-get install -y python3 python3-pip python3-venv || { echo "Failed to install Python3 via apt-get. Please install Python 3.8+ manually."; return 1; }
-  elif command -v dnf >/dev/null 2>&1; then
-    $SUDO dnf install -y python3 python3-pip || { echo "Failed to install Python3 via dnf. Please install Python 3.8+ manually."; return 1; }
-  elif command -v yum >/dev/null 2>&1; then
-    $SUDO yum install -y python3 python3-pip || { echo "Failed to install Python3 via yum. Please install Python 3.8+ manually."; return 1; }
-  elif command -v pacman >/dev/null 2>&1; then
-    $SUDO pacman -Sy --noconfirm python python-pip || { echo "Failed to install Python via pacman. Please install Python 3.8+ manually."; return 1; }
-  elif command -v zypper >/dev/null 2>&1; then
-    $SUDO zypper install -y python3 python3-pip || { echo "Failed to install Python via zypper. Please install Python 3.8+ manually."; return 1; }
-  else
-    echo "Unsupported package manager. Please install Python 3.8+ manually and re-run."
-    return 1
-  fi
-}
-
-ensure_python() {
-  if ! command -v python3 >/dev/null 2>&1; then
-    install_python || return 1
-  fi
-  ver="$(current_py_version)"
-  if [ -z "$ver" ]; then
-    echo "Could not determine python3 version."
-    return 1
-  fi
-  if version_ge "$ver" "3.8"; then
-    :
-  else
-    echo "Python3 version $ver is too old. Attempting to install a newer Python..."
-    install_python || return 1
-  fi
-  return 0
-}
-
-ensure_venv() {
-  if [ ! -x "$VENV_DIR/bin/python" ]; then
-    echo "Creating virtual environment at $VENV_DIR..."
-    python3 -m venv "$VENV_DIR" || { echo "Failed to create virtualenv. Ensure python3-venv is installed."; return 1; }
-  fi
-}
-
-venv_python() {
-  printf "%s/bin/python" "$VENV_DIR"
-}
-
-run_manager() {
-  local args=("$@")
-  ensure_dirs || return 1
-  ensure_python || return 1
-  ensure_venv || return 1
-  local PY
-  PY="$(venv_python)"
-  "$PY" "$AIRLINE_MANAGER" "${args[@]}"
-}
-
-print_usage() {
-  cat <<EOF
-${C_BOLD}Airline Manager Shell Wrapper${C_RESET}
-Default: run ${C_GREEN}./airline_manager.sh${C_RESET} to open the interactive manager UI.
-
-Advanced CLI usage:
-  ./airline_manager.sh [command] [args]
-
-Commands (delegated to airline_manager.py):
-  full_install | install_deps | clone | checkout <branch> | publish_local | init_db
-  start_web | stop_web | start_simulation | stop_simulation
-  set_map_key <key> | config_host_port <host> <port> | config_banner <yes|no>
-  config_elasticsearch <enabled:yes|no> <host> <port> | config_trusted_hosts <hosts>
-  setup_reverse_proxy <domain> <backend_port> <cert_path> <key_path> [assets_path]
-  resume_next | uninstall
-
-Interactive menu:
-  ./airline_manager.sh menu
-EOF
-}
-
-# Simple status header (no Python dependency required)
-draw_header() {
-  if command -v clear >/dev/null 2>&1; then clear; else printf "\033c"; fi
-  echo "${C_BLUE}${C_BOLD}==============================================${C_RESET}"
-  echo "${C_BLUE}${C_BOLD}         Airline Manager (Interactive)        ${C_RESET}"
-  echo "${C_BLUE}${C_BOLD}==============================================${C_RESET}"
-  echo "Project: ${PROJECT_ROOT}"
-  echo "Logs:    ${LOG_DIR}"
-  if [ -f "$PROJECT_ROOT/manager_state.json" ]; then
-    echo "State:   detected (manager_state.json)"
-  else
-    echo "State:   not initialized yet"
-  fi
-  echo ""
-}
-
-interactive_menu() {
-  while true; do
-    draw_header
-    echo "${C_GREEN}Select an option:${C_RESET}"
-    echo " ${C_YELLOW}1${C_RESET}) Full installation and configuration"
-    echo " ${C_YELLOW}2${C_RESET}) Install dependencies (JDK, SBT, MySQL)"
-    echo " ${C_YELLOW}3${C_RESET}) Clone repository"
-    echo " ${C_YELLOW}4${C_RESET}) Checkout branch"
-    echo " ${C_YELLOW}5${C_RESET}) Publish local"
-    echo " ${C_YELLOW}6${C_RESET}) Initialize DB data"
-    echo " ${C_YELLOW}7${C_RESET}) Start web server"
-    echo " ${C_YELLOW}8${C_RESET}) Stop web server"
-    echo " ${C_YELLOW}9${CRESET}) Start simulation"
-    echo " ${C_YELLOW}10${C_RESET}) Stop simulation"
-    echo " ${C_YELLOW}11${C_RESET}) Set Google Map API key"
-    echo " ${C_YELLOW}12${C_RESET}) Configure host/port"
-    echo " ${C_YELLOW}13${C_RESET}) Configure bannerEnabled"
-    echo " ${C_YELLOW}14${C_RESET}) Configure Elasticsearch"
-    echo " ${C_YELLOW}15${C_RESET}) Setup Nginx reverse proxy"
-    echo " ${C_YELLOW}16${C_RESET}) Resume next step"
-    echo " ${C_YELLOW}17${C_RESET}) Uninstall"
-    echo " ${C_YELLOW}18${C_RESET}) Configure trusted hosts"
-    echo " ${C_YELLOW}0${C_RESET}) Exit"
-    read -r -p "Enter choice: " choice
-    case "$choice" in
-      1) run_manager full_install || true ;;
-      2) run_manager install_deps || true ;;
-      3) run_manager clone || true ;;
-      4) read -r -p "Branch (default master): " br; [ -z "$br" ] && br="master"; run_manager checkout "$br" || true ;;
-      5) run_manager publish_local || true ;;
-      6) run_manager init_db || true ;;
-      7) run_manager start_web || true ;;
-      8) run_manager stop_web || true ;;
-      9) run_manager start_simulation || true ;;
-     10) run_manager stop_simulation || true ;;
-     11) read -r -p "Google Map API key: " key; run_manager set_map_key "$key" || true ;;
-     12) read -r -p "Host/address (default 0.0.0.0): " host; [ -z "$host" ] && host="0.0.0.0"; read -r -p "Port (default 9000): " port; [ -z "$port" ] && port="9000"; run_manager config_host_port "$host" "$port" || true ;;
-     13) read -r -p "Enable banner? (yes/no, default no): " be; [ -z "$be" ] && be="no"; run_manager config_banner "$be" || true ;;
-     14) read -r -p "Enable Elasticsearch? (yes/no, default no): " esen; [ -z "$esen" ] && esen="no"; if [ "$esen" = "yes" ]; then read -r -p "Elasticsearch host (default localhost): " esh; [ -z "$esh" ] && esh="localhost"; read -r -p "Elasticsearch port (default 9200): " esp; [ -z "$esp" ] && esp="9200"; else esh="localhost"; esp="9200"; fi; run_manager config_elasticsearch "$esen" "$esh" "$esp" || true ;;
-     15) read -r -p "Domain (e.g., example.com): " domain; read -r -p "Backend port (default 9000): " bport; [ -z "$bport" ] && bport="9000"; read -r -p "SSL certificate path: " cert; read -r -p "SSL key path: " key; read -r -p "Assets path (default airline-web/public): " ap; run_manager setup_reverse_proxy "$domain" "$bport" "$cert" "$key" "$ap" || true ;;
-     16) run_manager resume_next || true ;;
-     17) run_manager uninstall || true ;;
-     18) read -r -p "Comma-separated trusted hosts (e.g., localhost,127.0.0.1,example.com): " th; [ -z "$th" ] && th="localhost,127.0.0.1"; run_manager config_trusted_hosts "$th" || true ;;
-      0) echo "Bye."; break ;;
-      *) echo "${C_RED}Invalid choice.${C_RESET}"; sleep 1 ;;
-    esac
-  done
-}
-
-main() {
-  if [ ! -f "$AIRLINE_MANAGER" ]; then
-    echo "airline_manager.py not found at $AIRLINE_MANAGER"
-    echo "Please ensure you are running this script from the project root."
+if [ -z "$AIRLINE_DATA_PATH" ]; then
+    echo "Error: airline-data directory not found."
     exit 1
-  fi
+fi
 
-  if [ $# -lt 1 ]; then
-    interactive_menu
-    exit 0
-  fi
+if [ -z "$AIRLINE_WEB_PATH" ]; then
+    echo "Error: airline-web directory not found."
+    exit 1
+fi
 
-  case "$1" in
-    menu)
-      interactive_menu ;;
-    full_install|install_deps|clone|publish_local|init_db|start_web|stop_web|start_simulation|stop_simulation|resume_next|uninstall)
-      cmd="$1"; shift; run_manager "$cmd" "$@" ;;
-    checkout|set_map_key|config_host_port|config_banner|config_elasticsearch|config_trusted_hosts|setup_reverse_proxy)
-      cmd="$1"; shift; run_manager "$cmd" "$@" ;;
-    *)
-      print_usage ;;
-  esac
+# Function to get the local IP address
+get_local_ip() {
+    hostname -I | awk '{print $1}'
 }
 
-main "$@"
+# Function to get system CPU cores
+get_system_cpu_cores() {
+    nproc
+}
+
+# Function to get system memory in MB
+get_system_memory_mb() {
+    free -m | awk '/^Mem:/ {print $2}'
+}
+
+# Function to show current system resources
+show_system_resources() {
+    local cpu_cores=$(get_system_cpu_cores)
+    local memory_mb=$(get_system_memory_mb)
+    echo "System Resources:"
+    echo "  CPU Cores: $cpu_cores"
+    echo "  Memory: ${memory_mb}MB"
+    local cpu_percentage=$(echo "$MAX_CPU_RATIO * 100" | bc -l 2>/dev/null || echo "75")
+    printf "  Configured Limits: Memory=%sMB, CPU=%s cores (%s%% of system), Max Processes=%s\n" "$MAX_MEMORY_MB" "$MAX_CPU_CORES" "$cpu_percentage" "$MAX_PROCESSES"
+}
+
+# Function to calculate CPU quota based on system cores and desired ratio
+calculate_cpu_quota() {
+    local desired_cores=$1
+    local system_cores=$(get_system_cpu_cores)
+    
+    # Convert floating point to integer calculation (multiply by 1000000 for microseconds)
+    local quota=$(echo "$desired_cores * 1000000" | bc 2>/dev/null || echo "1500000")
+    
+    # Ensure we don't exceed system capabilities
+    local max_quota=$(echo "$system_cores * 1000000" | bc 2>/dev/null || echo "4000000")
+    
+    if [ -n "$quota" ] && [ "${quota%.*}" -gt 0 ] && [ "${quota%.*}" -le "${max_quota%.*}" ]; then
+        echo "$quota"
+    else
+        # Fallback to reasonable default (1.5 cores or 75% of system cores, whichever is smaller)
+        local fallback=$(echo "$system_cores * 750000" | bc 2>/dev/null || echo "1500000")
+        echo "$fallback"
+    fi
+}
+
+# Function to setup resource limits using cgroups v2
+setup_resource_limits() {
+    echo "Setting up resource limits for airline services..."
+    
+    # Show current system resources
+    show_system_resources
+    
+    # Check if cgroup v2 is available
+    if [ ! -d "/sys/fs/cgroup" ]; then
+        echo "Warning: cgroups not available, resource limits will not be enforced"
+        return 1
+    fi
+    
+    # Create cgroup for airline services
+    if [ -d "/sys/fs/cgroup/$CGROUP_NAME" ]; then
+        echo "Resource limit group already exists"
+    else
+        sudo mkdir -p "/sys/fs/cgroup/$CGROUP_NAME"
+        echo "Created resource limit group: $CGROUP_NAME"
+    fi
+    
+    # Set memory limit (in bytes) with validation
+    local system_memory_mb=$(get_system_memory_mb)
+    local effective_memory_limit=$MAX_MEMORY_MB
+    
+    # Ensure we don't allocate more than 75% of system memory
+    local max_reasonable_memory=$((system_memory_mb * 75 / 100))
+    if [ $MAX_MEMORY_MB -gt $max_reasonable_memory ]; then
+        effective_memory_limit=$max_reasonable_memory
+        printf "Warning: Requested memory limit %sMB exceeds 75%% of system memory %sMB\n" "$MAX_MEMORY_MB" "$system_memory_mb"
+        echo "Adjusting memory limit to ${effective_memory_limit}MB"
+    fi
+    
+    local memory_bytes=$((effective_memory_limit * 1024 * 1024))
+    echo $memory_bytes | sudo tee "/sys/fs/cgroup/$CGROUP_NAME/memory.max" 2>/dev/null || \
+    echo $memory_bytes | sudo tee "/sys/fs/cgroup/$CGROUP_NAME/memory.limit_in_bytes" 2>/dev/null || \
+    echo "Warning: Could not set memory limit"
+    
+    # Set CPU limit based on MAX_CPU_CORES configuration and system capabilities
+    local cpu_quota=$(calculate_cpu_quota $MAX_CPU_CORES)
+    local system_cores=$(get_system_cpu_cores)
+    printf "CPU limit calculated: %s microseconds (%s cores requested, %s cores available)\n" "$cpu_quota" "$MAX_CPU_CORES" "$system_cores"
+    echo $cpu_quota | sudo tee "/sys/fs/cgroup/$CGROUP_NAME/cpu.max" 2>/dev/null || \
+    echo "Warning: Could not set CPU limit"
+    
+    # Set process limit
+    echo $MAX_PROCESSES | sudo tee "/sys/fs/cgroup/$CGROUP_NAME/pids.max" 2>/dev/null || \
+    echo "Warning: Could not set process limit"
+    
+    echo "Resource limits configured: ${MAX_MEMORY_MB}MB RAM, ${MAX_CPU_CORES} CPU cores, ${MAX_PROCESSES} processes max"
+}
+
+# Function to configure SSH keepalive and connection protection
+configure_ssh_protection() {
+    echo "Configuring SSH connection protection..."
+    
+    # Set SSH keepalive for current session
+    export TMOUT=0
+    export SSH_KEEPALIVE_INTERVAL=$SSH_KEEPALIVE_INTERVAL
+    
+    # Configure SSH client keepalive
+    if [ -f "$HOME/.ssh/config" ]; then
+        # Backup existing config
+        cp "$HOME/.ssh/config" "$HOME/.ssh/config.backup.$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
+    fi
+    
+    # Add SSH keepalive settings
+    mkdir -p "$HOME/.ssh"
+    cat >> "$HOME/.ssh/config" << 'EOF'
+
+# Airline project SSH connection protection
+Host *
+    ServerAliveInterval 30
+    ServerAliveCountMax 6
+    TCPKeepAlive yes
+    ConnectTimeout 30
+EOF
+    
+    # Set system-level SSH keepalive if we have sudo access
+    if sudo -n true 2>/dev/null; then
+        # Configure SSH daemon keepalive
+        sudo tee -a /etc/ssh/sshd_config.d/airline-keepalive.conf << 'EOF' 2>/dev/null || true
+# Airline project SSH connection protection
+ClientAliveInterval 30
+ClientAliveCountMax 6
+TCPKeepAlive yes
+EOF
+        
+        # Restart SSH daemon if configuration was successful
+        if [ $? -eq 0 ]; then
+            sudo systemctl restart sshd 2>/dev/null || sudo service ssh restart 2>/dev/null || true
+        fi
+    fi
+    
+    # Configure system resource limits for SSH sessions
+    if [ -f "/etc/security/limits.conf" ]; then
+        sudo tee -a /etc/security/limits.conf << EOF 2>/dev/null || true
+# Airline project resource limits
+* soft nproc 4096
+* hard nproc 8192
+* soft nofile 65536
+* hard nofile 131072
+EOF
+    fi
+    
+    echo "SSH connection protection configured"
+}
+
+# Function to monitor system resources
+monitor_resources() {
+    local service_name=$1
+    local pid_file=$2
+    
+    if [ ! -f "$pid_file" ]; then
+        return 0
+    fi
+    
+    local main_pid=$(cat "$pid_file")
+    if ! kill -0 "$main_pid" 2>/dev/null; then
+        return 0
+    fi
+    
+    # Get all Java processes related to this service
+    local java_pids=$(pgrep -P "$main_pid" java 2>/dev/null || echo "")
+    local total_memory=0
+    local total_cpu=0
+    
+    for pid in $main_pid $java_pids; do
+        if [ -f "/proc/$pid/status" ]; then
+            local mem_kb=$(grep VmRSS "/proc/$pid/status" 2>/dev/null | awk '{print $2}' || echo "0")
+            total_memory=$((total_memory + mem_kb))
+        fi
+    done
+    
+    total_memory_mb=$((total_memory / 1024))
+    
+    # Check if memory usage exceeds limit
+    if [ $total_memory_mb -gt $((MAX_MEMORY_MB + 512)) ]; then  # 512MB buffer
+        echo "WARNING: $service_name memory usage (${total_memory_mb}MB) exceeds limit (${MAX_MEMORY_MB}MB)"
+        return 1
+    fi
+    
+    return 0
+}
+
+# Function to kill all processes in a cgroup
+kill_cgroup_processes() {
+    local cgroup_name=$1
+    
+    if [ -d "/sys/fs/cgroup/$cgroup_name" ]; then
+        # Get all PIDs in the cgroup
+        local pids=$(cat "/sys/fs/cgroup/$cgroup_name/cgroup.procs" 2>/dev/null || echo "")
+        
+        for pid in $pids; do
+            if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+                echo "Killing process $pid in cgroup $cgroup_name"
+                kill -TERM "$pid" 2>/dev/null || true
+            fi
+        done
+        
+        # Wait a bit and force kill if necessary
+        sleep 2
+        for pid in $pids; do
+            if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+                echo "Force killing process $pid"
+                kill -KILL "$pid" 2>/dev/null || true
+            fi
+        done
+    fi
+}
+
+# Function to generate a random secret key
+generate_secret_key() {
+    head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 64
+}
+
+# Function to update application.conf
+update_application_conf() {
+    echo "Updating airline-web/conf/application.conf..."
+    LOCAL_IP=$(get_local_ip)
+    SECRET_KEY=$(generate_secret_key)
+
+    # Update secret keys
+    sed -i "s/^play.crypto.secret = \".*\"/play.crypto.secret = \"$SECRET_KEY\"/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+    sed -i "s/^play.http.secret.key = \".*\"/play.http.secret.key = \"$SECRET_KEY\"/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+
+    # Update IP addresses
+    sed -i "s/hostname = \"[0-9.]*\"/hostname = \"$LOCAL_IP\"/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+    sed -i "s/hostname = \"[0-9.]*\" #your private IP here/hostname = \"$LOCAL_IP\" #your private IP here/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+
+    # Configure database settings
+    echo "Configuring database settings in application.conf..."
+    sed -i 's/# db.default.driver=org.h2.Driver/db.default.driver=com.mysql.jdbc.Driver/' "$AIRLINE_WEB_PATH/conf/application.conf"
+    # Update to match any existing db.default.url line
+    sed -i 's|^db.default.url=.*|db.default.url="jdbc:mysql://127.0.0.1:3306/airline_v2_1?characterEncoding=UTF-8"|' "$AIRLINE_WEB_PATH/conf/application.conf"
+    sed -i 's/# db.default.username=sa/db.default.username=sa/' "$AIRLINE_WEB_PATH/conf/application.conf"
+    read -p "Enter database password (min 8 characters for MySQL 8.x): " db_password
+    # MySQL user and database setup
+    echo "Setting up MySQL user and database..."
+    sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS airline_v2_1; CREATE USER IF NOT EXISTS 'sa'@'localhost' IDENTIFIED BY '$db_password'; GRANT ALL PRIVILEGES ON airline_v2_1.* TO 'sa'@'localhost'; FLUSH PRIVILEGES;"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to set up MySQL user or database. Please check MySQL root password or permissions."
+        return 1
+    fi
+    echo "MySQL user 'sa' and database 'airline_v2_1' configured."
+    sed -i "s/^db.default.password=.*$/db.default.password=$db_password/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+    sed -i 's/play.evolutions.enabled=false/play.evolutions.enabled=true/g' "$AIRLINE_WEB_PATH/conf/application.conf"
+    sed -i 's/# play.evolutions.enabled=false/play.evolutions.enabled=true/' "$AIRLINE_WEB_PATH/conf/application.conf"
+
+    # Update airline-data's application.conf
+    AIRLINE_DATA_CONF="$AIRLINE_DATA_PATH/src/main/resources/application.conf"
+
+    # Ensure mysqldb.host, mysqldb.user, mysqldb.password are on new lines
+    sed -i 's/\([^[:space:]]\)mysqldb.host=/\1\nmysqldb.host=/' "$AIRLINE_DATA_CONF"
+    sed -i 's/\([^[:space:]]\)mysqldb.user=/\1\nmysqldb.user=/' "$AIRLINE_DATA_CONF"
+    sed -i 's/\([^[:space:]]\)mysqldb.password=/\1\nmysqldb.password=/' "$AIRLINE_DATA_CONF"
+
+    # Set mysqldb.host to 127.0.0.1 (matches airline-web)
+    if ! grep -q "mysqldb.host=" "$AIRLINE_DATA_CONF"; then
+        echo -e "\nmysqldb.host=\"127.0.0.1\"" >> "$AIRLINE_DATA_CONF"
+    else
+        sed -i 's|mysqldb.host=.*|mysqldb.host=\"127.0.0.1\"|' "$AIRLINE_DATA_CONF"
+    fi
+
+    # Check and update mysqldb.user
+    if ! grep -q "mysqldb.user=" "$AIRLINE_DATA_CONF"; then
+        echo -e "\nmysqldb.user=\"sa\"" >> "$AIRLINE_DATA_CONF"
+    else
+        sed -i 's|mysqldb.user=.*|mysqldb.user=\"sa\"|' "$AIRLINE_DATA_CONF"
+    fi
+
+    # Check and update mysqldb.password
+    if ! grep -q "mysqldb.password=" "$AIRLINE_DATA_CONF"; then
+        echo -e "\nmysqldb.password=\"$db_password\"" >> "$AIRLINE_DATA_CONF"
+    else
+        sed -i 's|mysqldb.password=.*|mysqldb.password=\"'"$db_password"'\"|' "$AIRLINE_DATA_CONF"
+    fi
+
+    # Check and update mysqldb.dbParams
+    if ! grep -q "mysqldb.dbParams=" "$AIRLINE_DATA_CONF"; then
+        echo -e "\nmysqldb.dbParams=\"&allowPublicKeyRetrieval=true\"" >> "$AIRLINE_DATA_CONF"
+    else
+        sed -i 's|mysqldb.dbParams=.*|mysqldb.dbParams="\&allowPublicKeyRetrieval=true"|' "$AIRLINE_DATA_CONF"
+    fi
+
+    # --- Synchronize mysqldb settings in airline-web/conf/application.conf ---
+    AIRLINE_WEB_CONF="$AIRLINE_WEB_PATH/conf/application.conf"
+
+    # Ensure mysqldb.host in airline-web conf matches 127.0.0.1:3306
+    if ! grep -q "mysqldb.host=" "$AIRLINE_WEB_CONF"; then
+        echo -e "\nmysqldb.host=\"127.0.0.1:3306\"" >> "$AIRLINE_WEB_CONF"
+    else
+        sed -i 's|mysqldb.host=.*|mysqldb.host="127.0.0.1:3306"|' "$AIRLINE_WEB_CONF"
+    fi
+
+    # Ensure mysqldb.user in airline-web conf is sa
+    if ! grep -q "mysqldb.user=" "$AIRLINE_WEB_CONF"; then
+        echo -e "\nmysqldb.user=\"sa\"" >> "$AIRLINE_WEB_CONF"
+    else
+        sed -i 's|mysqldb.user=.*|mysqldb.user="sa"|' "$AIRLINE_WEB_CONF"
+    fi
+
+    # Ensure mysqldb.password in airline-web conf matches user input
+    if ! grep -q "mysqldb.password=" "$AIRLINE_WEB_CONF"; then
+        echo -e "\nmysqldb.password=\"$db_password\"" >> "$AIRLINE_WEB_CONF"
+    else
+        sed -i 's|mysqldb.password=.*|mysqldb.password="'$db_password'"|' "$AIRLINE_WEB_CONF"
+    fi
+
+    # Ensure mysqldb.dbParams in airline-web conf includes allowPublicKeyRetrieval
+    if ! grep -q "mysqldb.dbParams=" "$AIRLINE_WEB_CONF"; then
+        echo -e "\nmysqldb.dbParams=\"&allowPublicKeyRetrieval=true\"" >> "$AIRLINE_WEB_CONF"
+    else
+        sed -i 's|mysqldb.dbParams=.*|mysqldb.dbParams="\&allowPublicKeyRetrieval=true"|' "$AIRLINE_WEB_CONF"
+    fi
+
+    # Enable/Disable banner
+    read -p "Do you want to enable the banner? (y/n): " banner_choice
+    if [[ "$banner_choice" == "y" || "$banner_choice" == "Y" ]]; then
+        sed -i "s/bannerEnabled = false/bannerEnabled = true/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+        echo "Banner enabled."
+    else
+        sed -i "s/bannerEnabled = true/bannerEnabled = false/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+        echo "Banner disabled."
+    fi
+
+    # Configure Google API keys
+    read -p "Do you want to set Google API keys? (y/n): " google_api_choice
+    if [[ "$google_api_choice" == "y" || "$google_api_choice" == "Y" ]]; then
+        read -p "Enter google.mapKey: " google_map_key
+        read -p "Enter google.apiKey: " google_api_key
+        sed -i "s/^google.mapKey=\".*\"/google.mapKey=\"$google_map_key\"/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+        sed -i "s/^google.apiKey=\".*\"/google.apiKey=\"$google_api_key\"/g" "$AIRLINE_WEB_PATH/conf/application.conf"
+        echo "Google API keys updated."
+    else
+        echo "Google API keys not set."
+    fi
+
+    echo "application.conf updated."
+}
+
+# Function to initialize the database
+initialize_database() {
+    echo "Initializing database..."
+    LOG_FILE="$AIRLINE_DATA_PATH/init_database.log"
+    echo "Running MainInit in airline-data. Output will be logged to $LOG_FILE"
+    if (cd "$AIRLINE_DATA_PATH" && sbt -mem 2048 "runMain com.patson.init.MainInit" > "$LOG_FILE" 2>&1); then
+        echo "Database initialization complete. Check $LOG_FILE for details."
+        read -p "Press Enter to return to the menu..."
+    else
+        echo "Database initialization failed. Check $LOG_FILE for errors."
+        read -p "Press Enter to return to the menu..."
+    fi
+}
+
+# Function to start services with resource limits
+start_services() {
+    echo "Starting airline-data simulation and airline-web server with resource limits..."
+    
+    # Setup resource limits first
+    setup_resource_limits
+    configure_ssh_protection
+    
+    # Create separate cgroups for each service
+    local data_cgroup="${CGROUP_NAME}_data"
+    local web_cgroup="${CGROUP_NAME}_web"
+    
+    # ----- airline-data simulation -----
+    if [ -f "$AIRLINE_DATA_PATH/simulation.pid" ] && kill -0 "$(cat \"$AIRLINE_DATA_PATH/simulation.pid\")" 2>/dev/null; then
+        echo "Airline-data simulation already running with PID $(cat \"$AIRLINE_DATA_PATH/simulation.pid\")"
+    else
+        echo "Launching airline-data MainSimulation with resource limits (logs: airline-data/simulation.log) ..."
+        
+        # Create cgroup for data service
+        sudo mkdir -p "/sys/fs/cgroup/$data_cgroup" 2>/dev/null || true
+        
+        # Set resource limits for data service
+        local memory_bytes=$((MAX_MEMORY_MB * 1024 * 1024))
+        echo $memory_bytes | sudo tee "/sys/fs/cgroup/$data_cgroup/memory.max" 2>/dev/null || true
+        local cpu_quota=$(echo "$MAX_CPU_CORES * 100000" | bc -l 2>/dev/null || echo "300000")
+        echo $cpu_quota | sudo tee "/sys/fs/cgroup/$data_cgroup/cpu.max" 2>/dev/null || true
+        echo $MAX_PROCESSES | sudo tee "/sys/fs/cgroup/$data_cgroup/pids.max" 2>/dev/null || true
+        
+        # Start with resource limits and monitoring
+        (
+          cd "$AIRLINE_DATA_PATH" && \
+          # Use cgexec if available, otherwise fall back to regular start with JVM limits
+          if command -v cgexec >/dev/null 2>&1; then
+              cgexec -g memory,cpu,pids:$data_cgroup \
+                  bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError 'runMain com.patson.MainSimulation' > '$AIRLINE_DATA_PATH/simulation.log' 2>&1" &
+          else
+              # Fallback with JVM memory limits only
+              bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError -J-Xmx${MAX_MEMORY_MB}m 'runMain com.patson.MainSimulation' > '$AIRLINE_DATA_PATH/simulation.log' 2>&1" &
+          fi
+          echo $! > "$AIRLINE_DATA_PATH/simulation.pid"
+        )
+        
+        # Process is already in cgroup via cgexec, no need to add it again
+        
+        echo "Airline-data simulation started with PID $main_pid (limited to ${MAX_MEMORY_MB}MB RAM, ${MAX_CPU_CORES} CPU cores)"
+        
+        # Start resource monitoring in background
+        (
+            while kill -0 "$main_pid" 2>/dev/null; do
+                if ! monitor_resources "airline-data" "$AIRLINE_DATA_PATH/simulation.pid"; then
+                    echo "Resource limit exceeded for airline-data, restarting service..."
+                    # Kill and restart will be handled by main monitoring loop
+                    break
+                fi
+                sleep 60
+            done
+        ) &
+    fi
+
+    # ----- airline-web server -----
+    if [ -f "$AIRLINE_WEB_PATH/web.pid" ] && kill -0 "$(cat \"$AIRLINE_WEB_PATH/web.pid\")" 2>/dev/null; then
+        echo "Airline-web server already running with PID $(cat \"$AIRLINE_WEB_PATH/web.pid\")"
+    else
+        echo "Launching airline-web server with resource limits (logs: airline-web/web.log) ..."
+        
+        # Create cgroup for web service
+        sudo mkdir -p "/sys/fs/cgroup/$web_cgroup" 2>/dev/null || true
+        
+        # Set resource limits for web service
+        local memory_bytes=$((MAX_MEMORY_MB * 1024 * 1024))
+        echo $memory_bytes | sudo tee "/sys/fs/cgroup/$web_cgroup/memory.max" 2>/dev/null || true
+        local cpu_quota=$(echo "$MAX_CPU_CORES * 100000" | bc -l 2>/dev/null || echo "300000")
+        echo $cpu_quota | sudo tee "/sys/fs/cgroup/$web_cgroup/cpu.max" 2>/dev/null || true
+        echo $MAX_PROCESSES | sudo tee "/sys/fs/cgroup/$web_cgroup/pids.max" 2>/dev/null || true
+        
+        # Start with resource limits and monitoring
+        (
+          cd "$AIRLINE_WEB_PATH" && \
+          # Use cgexec if available, otherwise fall back to regular start with JVM limits
+          if command -v cgexec >/dev/null 2>&1; then
+              cgexec -g memory,cpu,pids:$web_cgroup \
+                  bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError 'run' > '$AIRLINE_WEB_PATH/web.log' 2>&1" &
+          else
+              # Fallback with JVM memory limits only
+              bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError -J-Xmx${MAX_MEMORY_MB}m 'run' > '$AIRLINE_WEB_PATH/web.log' 2>&1" &
+          fi
+          echo $! > "$AIRLINE_WEB_PATH/web.pid"
+        )
+        
+        # Process is already in cgroup via cgexec, no need to add it again
+        
+        echo "Airline-web server started with PID $main_pid (limited to ${MAX_MEMORY_MB}MB RAM, ${MAX_CPU_CORES} CPU cores)"
+        
+        # Start resource monitoring in background
+        (
+            while kill -0 "$main_pid" 2>/dev/null; do
+                if ! monitor_resources "airline-web" "$AIRLINE_WEB_PATH/web.pid"; then
+                    echo "Resource limit exceeded for airline-web, restarting service..."
+                    # Kill and restart will be handled by main monitoring loop
+                    break
+                fi
+                sleep 60
+            done
+        ) &
+    fi
+
+    echo "Services started with resource limits. You can access the web application at http://$(get_local_ip):9000"
+    echo "Resource monitoring is active. Services will be restarted if they exceed memory/CPU limits."
+}
+
+# Function to stop services
+stop_services() {
+    echo "Stopping airline-data simulation and airline-web server..."
+
+    # Kill all processes in cgroups first
+    kill_cgroup_processes "${CGROUP_NAME}_data"
+    kill_cgroup_processes "${CGROUP_NAME}_web"
+    kill_cgroup_processes "$CGROUP_NAME"
+
+    for pidfile in "$AIRLINE_DATA_PATH/simulation.pid" "$AIRLINE_WEB_PATH/web.pid"; do
+        if [ -f "$pidfile" ]; then
+            pid=$(cat "$pidfile")
+            if kill -0 "$pid" 2>/dev/null; then
+                echo "Stopping process $pid (from $(basename "$pidfile"))"
+                kill -TERM "$pid" 2>/dev/null
+                sleep 2
+                if kill -0 "$pid" 2>/dev/null; then
+                    echo "Force killing process $pid"
+                    kill -KILL "$pid" 2>/dev/null
+                fi
+            fi
+            rm -f "$pidfile"
+        fi
+    done
+
+    # Clean up monitoring processes
+    pkill -f "monitor_resources.*airline" 2>/dev/null || true
+
+    echo "Services stopped and resource limits cleaned up."
+}
+
+# Function to monitor and auto-restart services if needed
+monitor_services() {
+    echo "Monitoring airline services for resource usage and health..."
+    
+    local restart_count=0
+    local max_restarts=3
+    
+    while true; do
+        local needs_restart=false
+        
+        # Check airline-data service
+        if [ -f "$AIRLINE_DATA_PATH/simulation.pid" ]; then
+            local data_pid=$(cat "$AIRLINE_DATA_PATH/simulation.pid")
+            if ! kill -0 "$data_pid" 2>/dev/null; then
+                echo "Airline-data simulation is not running, will restart..."
+                needs_restart=true
+            elif ! monitor_resources "airline-data" "$AIRLINE_DATA_PATH/simulation.pid"; then
+                echo "Airline-data simulation exceeded resource limits, will restart..."
+                needs_restart=true
+            fi
+        else
+            echo "Airline-data simulation PID file missing, will restart..."
+            needs_restart=true
+        fi
+        
+        # Check airline-web service
+        if [ -f "$AIRLINE_WEB_PATH/web.pid" ]; then
+            local web_pid=$(cat "$AIRLINE_WEB_PATH/web.pid")
+            if ! kill -0 "$web_pid" 2>/dev/null; then
+                echo "Airline-web server is not running, will restart..."
+                needs_restart=true
+            elif ! monitor_resources "airline-web" "$AIRLINE_WEB_PATH/web.pid"; then
+                echo "Airline-web server exceeded resource limits, will restart..."
+                needs_restart=true
+            fi
+        else
+            echo "Airline-web server PID file missing, will restart..."
+            needs_restart=true
+        fi
+        
+        if [ "$needs_restart" = true ]; then
+            restart_count=$((restart_count + 1))
+            if [ $restart_count -le $max_restarts ]; then
+                echo "Restarting services (attempt $restart_count/$max_restarts)..."
+                stop_services
+                sleep 5
+                start_services
+            else
+                echo "Maximum restart attempts ($max_restarts) reached. Manual intervention required."
+                break
+            fi
+        else
+            restart_count=0  # Reset counter if services are healthy
+        fi
+        
+        sleep 120  # Check every 2 minutes
+    done
+}
+
+# Function to upgrade MySQL (placeholder for now)
+upgrade_mysql() {
+    echo "MySQL upgrade is a complex process and requires manual intervention."
+    echo "Please refer to the MySQL official documentation for upgrading from 5.x to 8.x."
+    echo "You might need to backup your data, uninstall 5.x, install 8.x, and then restore/migrate data."
+    echo "Note: MySQL 8.x has stricter password policies. Ensure your MySQL user 'sa' has a strong password that meets the requirements, or adjust the password policy if necessary."
+}
+
+show_menu() {
+    echo "
+Airline Project Management Menu"
+    echo "-----------------------------"
+    echo "1. Update application.conf"
+    echo "2. Initialize Database"
+    echo "3. Start Services (with resource limits & SSH protection)"
+    echo "4. Stop Services"
+    echo "5. Status of Services (with resource usage)"
+    echo "6. Configure SSH Protection"
+    echo "7. Setup Resource Limits"
+    echo "8. Monitor Services (auto-restart mode)"
+    echo "9. Upgrade MySQL (Manual process)"
+    echo "10. Exit"
+    echo "-----------------------------"
+}
+
+function status_services() {
+    echo "Checking status of airline-data simulation and airline-web server..."
+
+    # Helper to print status for a service
+    print_status() {
+        local NAME=$1
+        local PID_FILE=$2
+        local LOG_FILE=$3
+        local CGROUP_NAME=$4
+        
+        if [ -f "$PID_FILE" ]; then
+            local PID=$(cat "$PID_FILE")
+            if kill -0 "$PID" 2>/dev/null; then
+                local STATE="RUNNING (PID $PID)"
+                
+                # Get resource usage if cgroup exists
+                local RESOURCE_INFO=""
+                if [ -n "$CGROUP_NAME" ] && [ -d "/sys/fs/cgroup/$CGROUP_NAME" ]; then
+                    local mem_current=$(cat "/sys/fs/cgroup/$CGROUP_NAME/memory.current" 2>/dev/null || echo "0")
+                    local mem_max=$(cat "/sys/fs/cgroup/$CGROUP_NAME/memory.max" 2>/dev/null || echo "0")
+                    local cpu_stat=$(cat "/sys/fs/cgroup/$CGROUP_NAME/cpu.stat" 2>/dev/null | grep "usage_usec" | awk '{print $2}' || echo "0")
+                    
+                    if [ "$mem_current" != "0" ] && [ "$mem_max" != "0" ]; then
+                        local mem_mb=$((mem_current / 1024 / 1024))
+                        local mem_max_mb=$((mem_max / 1024 / 1024))
+                        RESOURCE_INFO=" | Memory: ${mem_mb}MB/${mem_max_mb}MB"
+                    fi
+                fi
+                
+            else
+                local STATE="PID FILE PRESENT BUT PROCESS NOT RUNNING"
+            fi
+        else
+            local STATE="NOT RUNNING"
+        fi
+
+        # quick log scan for error keywords if log exists
+        local ERROR_MSG=""
+        if [ -f "$LOG_FILE" ]; then
+            if grep -E -i -q "(exception|error|fatal)" "$LOG_FILE"; then
+                ERROR_MSG=" | Recent log indicates ERRORS"
+            fi
+        fi
+        echo "- $NAME : $STATE$RESOURCE_INFO$ERROR_MSG (log: $LOG_FILE)"
+    }
+
+    print_status "airline-data simulation" "$AIRLINE_DATA_PATH/simulation.pid" "$AIRLINE_DATA_PATH/simulation.log" "${CGROUP_NAME}_data"
+    print_status "airline-web server" "$AIRLINE_WEB_PATH/web.pid" "$AIRLINE_WEB_PATH/web.log" "${CGROUP_NAME}_web"
+    
+    # Show overall system resource usage
+    echo ""
+    echo "System Resource Status:"
+    local total_mem=$(free -m | awk 'NR==2{print $2}')
+    local used_mem=$(free -m | awk 'NR==2{print $3}')
+    local mem_percent=$(echo "scale=1; $used_mem * 100 / $total_mem" | bc -l 2>/dev/null || echo "N/A")
+    local load_avg=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | sed 's/,//')
+    echo "- Memory: ${used_mem}MB/${total_mem}MB (${mem_percent}%) | Load: ${load_avg}"
+
+    echo "Status check complete."
+    read -p "Press Enter to return to the menu..."
+}
+
+while true; do
+    show_menu
+    read -p "Enter your choice [1-10]: " choice
+    case $choice in
+        1) update_application_conf ;;
+        2) initialize_database ;;
+        3) start_services ;;
+        4) stop_services ;;
+        5) status_services ;;
+        6) configure_ssh_protection ;;
+        7) setup_resource_limits ;;
+        8) monitor_services ;;
+        9) upgrade_mysql ;;
+        10) echo "Exiting..."; exit 0 ;;
+        *) echo "Invalid option. Please enter a number between 1 and 10." ;;
+    esac
+    echo ""
+done
