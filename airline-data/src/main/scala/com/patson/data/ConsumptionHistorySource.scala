@@ -221,15 +221,17 @@ object ConsumptionHistorySource {
 
       //filter out routes that cannot find history (should not happen), and replace the value with LinkConsideration
 
-      resultSet.beforeFirst()
-      while (resultSet.next()) {
-        val linkId = resultSet.getInt("link")
-        val routeId = resultSet.getInt("route_id")
-        val passengerType = PassengerType.apply(resultSet.getInt("passenger_type"))
-        val passengerCount = resultSet.getInt("passenger_count")
-        val cost = resultSet.getInt("cost")
+      // Re-execute query for the second pass instead of beforeFirst
+      resultSet.close()
+      val resultSet2 = preparedStatement.executeQuery()
+      while (resultSet2.next()) {
+        val linkId = resultSet2.getInt("link")
+        val routeId = resultSet2.getInt("route_id")
+        val passengerType = PassengerType.apply(resultSet2.getInt("passenger_type"))
+        val passengerCount = resultSet2.getInt("passenger_count")
+        val cost = resultSet2.getInt("cost")
         linkConsumptionById.get(linkId).foreach { linkConsumption =>
-          val linkConsideration = LinkConsideration.getExplicit(linkConsumption.link, cost = cost, LinkClass.fromCode(resultSet.getString("link_class")), resultSet.getBoolean("inverted"))
+          val linkConsideration = LinkConsideration.getExplicit(linkConsumption.link, cost = cost, LinkClass.fromCode(resultSet2.getString("link_class")), resultSet2.getBoolean("inverted"))
           val existingConsiderationsForThisRoute = linkConsiderationsByRouteId.getOrElseUpdate(routeId, ListBuffer[LinkConsideration]())
 
           existingConsiderationsForThisRoute += linkConsideration
@@ -300,15 +302,17 @@ object ConsumptionHistorySource {
               }
               val linkMap = LinkSource.loadLinksByIds(relatedLinkIds.toList).map(link => (link.id, link)).toMap
 
-              relatedRouteSet.beforeFirst()
-              while (relatedRouteSet.next()) {
-                val routeId = relatedRouteSet.getInt("route_id")
-                val passengerType = PassengerType.apply(relatedRouteSet.getInt("passenger_type"))
-                val passengerCount = relatedRouteSet.getInt("passenger_count")
-                val relatedLinkId = relatedRouteSet.getInt("link")
+              // Re-execute for second pass instead of beforeFirst
+              relatedRouteSet.close()
+              val relatedRouteSet2 = relatedRouteStatement.executeQuery()
+              while (relatedRouteSet2.next()) {
+                val routeId = relatedRouteSet2.getInt("route_id")
+                val passengerType = PassengerType.apply(relatedRouteSet2.getInt("passenger_type"))
+                val passengerCount = relatedRouteSet2.getInt("passenger_count")
+                val relatedLinkId = relatedRouteSet2.getInt("link")
                 val relatedLink = linkMap.getOrElse(relatedLinkId, Link.fromId(relatedLinkId))
-                val cost = relatedRouteSet.getInt("cost")
-                val linkConsideration = LinkConsideration.getExplicit(relatedLink, cost = cost, LinkClass.fromCode(relatedRouteSet.getString("link_class")), relatedRouteSet.getBoolean("inverted"))
+                val cost = relatedRouteSet2.getInt("cost")
+                val linkConsideration = LinkConsideration.getExplicit(relatedLink, cost = cost, LinkClass.fromCode(relatedRouteSet2.getString("link_class")), relatedRouteSet2.getBoolean("inverted"))
 
                 val existingConsiderationsForThisRoute = linkConsiderationsByRouteId.getOrElseUpdate(routeId, ListBuffer[LinkConsideration]())
 

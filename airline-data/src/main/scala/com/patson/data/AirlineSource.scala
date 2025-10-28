@@ -7,7 +7,7 @@ import com.patson.data.Constants._
 import com.patson.model._
 import com.patson.MainSimulation
 
-import java.sql.{Blob, Date, Statement}
+import java.sql.{Blob, Date, Statement, ResultSet}
 import java.io.ByteArrayInputStream
 import com.patson.util.{AirlineCache, AirportCache}
 
@@ -50,6 +50,7 @@ object AirlineSource {
   private def loadAirlinesByQueryString(queryString : String, parameters : List[Any], fullLoad : Boolean = false) : List[Airline] = {
     val connection = Meta.getConnection()
     try {
+        // Use forward-only, read-only for broader driver compatibility
         val preparedStatement = connection.prepareStatement(queryString)
         
         for (i <- 0 until parameters.size) {
@@ -407,34 +408,27 @@ object AirlineSource {
         
         
         val resultSet = preparedStatement.executeQuery()
-        
+
         val bases = new ListBuffer[AirlineBase]()
         
-        val airportIds = scala.collection.mutable.Set[Int]()
-        while (resultSet.next()) {
-          airportIds.add(resultSet.getInt("airport"))
-        }
-        
-        val airports = AirportCache.getAirports(airportIds.toList, false)
-        
-        resultSet.beforeFirst()
+        // Build airports cache on the fly without resetting cursor
+        val airportsCache = scala.collection.mutable.Map[Int, Airport]()
         while (resultSet.next()) {
           val airlineId = resultSet.getInt("airline")
           val airline = airlines.getOrElseUpdate(airlineId, AirlineCache.getAirline(airlineId, false).getOrElse(Airline.fromId(airlineId)))
-          //val airport = Airport.fromId(resultSet.getInt("airport"))
           val airportId = resultSet.getInt("airport")
-          val airport = airports(airportId)
+          val airport = airportsCache.getOrElseUpdate(airportId, AirportCache.getAirport(airportId, false).get)
           val scale = resultSet.getInt("scale")
           val foundedCycle = resultSet.getInt("founded_cycle")
           val headquarter = resultSet.getBoolean("headquarter")
           val countryCode = resultSet.getString("country")
-          
+
           bases += AirlineBase(airline, airport, countryCode, scale, foundedCycle, headquarter)
         }
-        
+
         resultSet.close()
         preparedStatement.close()
-        
+
         bases.toList
       } finally {
         connection.close()

@@ -14,9 +14,8 @@
 	<link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("stylesheets/new-style.css")">
 	<link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("stylesheets/mobile.css")">
 	<script src="@routes.Assets.versioned("javascripts/libs/jquery-2.1.4.js")"></script>
-    <script src="@routes.Assets.versioned("javascripts/libs/jquery.cookie.js")"></script>
-	<script src='https://www.google.com/recaptcha/api.js?render=6LespV8UAAAAAJkCUpR8_uNC3P-wZGq7vnTNKEZe'></script>
-	<script src="@routes.Assets.versioned("javascripts/signup.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/libs/jquery.cookie.js")"></script>\
+	<script src='@routes.Assets.versioned("javascripts/signup.js")?v=2'></script>
 	<script>
 		window['_fs_debug'] = false;
 		window['_fs_host'] = 'fullstory.com';
@@ -43,11 +42,10 @@
 	</script>
 </head>
 <body>
-	<div style="width: 100%">
-	<div class="frost-section" style="margin-top: 20vh; left: 50%; transform: translateX(-50%);">
+	<div style="width: 100%; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+	<div class="frost-section">
 		<div class="display-area">
 			<h1>New Airline Sign-up</h1>
-
 			@implicitField = @{ FieldConstructor(myFieldConstructorTemplate.f) }
 			@helper.form(action = routes.SignUp.submit) {
 			<fieldset>
@@ -90,21 +88,15 @@
 					)
 				</div>
 			</fieldset>
-<!--			<input type="hidden" id="profileId" name="profileId" value="1"/>-->
-<!--			<div id ="profiles" style="padding: 10px;">-->
-<!--				<h4>Pick your airline:</h4>-->
-<!--			</div>-->
 			<div style="clear: both;"></div>
 			<div class="actions">
 				<div class="button" onclick="signup($(this).parents('form:first'))">Sign Up</div>
-				<!--  <input type="submit" class="button" value="Sign Up"> -->
 				<div class="button"><a href="@routes.Application.index" class="btn">Cancel</a></div>
 			</div>
 			}
 		</div>
 	</div>
 	</div>
-	<!-- Modal for loading -->
-	<div class="loadingSpinner"><!-- Place at bottom of page --></div>
+	<div class="loadingSpinner"></div>
 </body>
 </html>

@@ -96,11 +96,13 @@ object LinkSource {
         case None => airportIds.map(id => (id, Airport.fromId(id))).toMap
       }
       
-      resultSet.beforeFirst()
-      while (resultSet.next()) {
-        val fromAirportId = resultSet.getInt("from_airport")
-        val toAirportId = resultSet.getInt("to_airport")
-        val airlineId = resultSet.getInt("airline")
+      // Re-execute query for second pass to avoid beforeFirst on forward-only cursor
+      resultSet.close()
+      val resultSet2 = preparedStatement.executeQuery()
+      while (resultSet2.next()) {
+        val fromAirportId = resultSet2.getInt("from_airport")
+        val toAirportId = resultSet2.getInt("to_airport")
+        val airlineId = resultSet2.getInt("airline")
         
         val fromAirport = airportCache.get(fromAirportId) //Do not use AirportCache as fullLoad will be slow
         val toAirport = airportCache.get(toAirportId) //Do not use AirportCache as fullLoad will be slow
@@ -110,7 +112,7 @@ object LinkSource {
         }
         
         if (fromAirport.isDefined && toAirport.isDefined && airline.isDefined) {
-          val transportType = TransportType(resultSet.getInt("transport_type"))
+          val transportType = TransportType(resultSet2.getInt("transport_type"))
           val link = {
             import TransportType._
             transportType match {
@@ -119,14 +121,14 @@ object LinkSource {
                   fromAirport.get,
                   toAirport.get,
                   airline.get,
-                  LinkClassValues.getInstance(resultSet.getInt("price_economy"), resultSet.getInt("price_business"), resultSet.getInt("price_first")),
-                  resultSet.getInt("distance"),
-                  LinkClassValues.getInstance(resultSet.getInt("capacity_economy"), resultSet.getInt("capacity_business"), resultSet.getInt("capacity_first")),
-                  resultSet.getInt("quality"),
-                  resultSet.getInt("duration"),
-                  resultSet.getInt("frequency"),
-                  FlightType(resultSet.getInt("flight_type")),
-                  resultSet.getInt("flight_number"))
+                  LinkClassValues.getInstance(resultSet2.getInt("price_economy"), resultSet2.getInt("price_business"), resultSet2.getInt("price_first")),
+                  resultSet2.getInt("distance"),
+                  LinkClassValues.getInstance(resultSet2.getInt("capacity_economy"), resultSet2.getInt("capacity_business"), resultSet2.getInt("capacity_first")),
+                  resultSet2.getInt("quality"),
+                  resultSet2.getInt("duration"),
+                  resultSet2.getInt("frequency"),
+                  FlightType(resultSet2.getInt("flight_type")),
+                  resultSet2.getInt("flight_number"))
               case GENERIC_TRANSIT =>
                 //from : Airport, to : Airport, airline: Airline, distance : Int, var capacity: LinkClassValues, duration : Int, var frequency : Int, var id : Int = 0
                 GenericTransit(
@@ -253,14 +255,16 @@ object LinkSource {
       }
       
       val airplaneCache = AirplaneSource.loadAirplanesByIds(airplaneIds.toList).map { airplane => (airplane.id, airplane) }.toMap
-      assignmentResultSet.beforeFirst()
+      // Re-run query for second pass instead of beforeFirst
+      assignmentResultSet.close()
+      val assignmentResultSet2 = linkAssignmentStatement.executeQuery
       
       val assignments = new HashMap[Int, HashMap[Airplane, LinkAssignment]]()
-      while (assignmentResultSet.next()) {
-        val link = assignmentResultSet.getInt("link")
-        airplaneCache.get(assignmentResultSet.getInt("airplane")).foreach { airplane =>
+      while (assignmentResultSet2.next()) {
+        val link = assignmentResultSet2.getInt("link")
+        airplaneCache.get(assignmentResultSet2.getInt("airplane")).foreach { airplane =>
           val airplanesForThisLink = assignments.getOrElseUpdate(link, new HashMap[Airplane, LinkAssignment]);
-          airplanesForThisLink.put(airplane, LinkAssignment(assignmentResultSet.getInt("frequency"), assignmentResultSet.getInt("flight_minutes")))
+          airplanesForThisLink.put(airplane, LinkAssignment(assignmentResultSet2.getInt("frequency"), assignmentResultSet2.getInt("flight_minutes")))
         };
       }
 
@@ -270,7 +274,7 @@ object LinkSource {
         }
       }
       
-      assignmentResultSet.close()
+      assignmentResultSet2.close()
       linkAssignmentStatement.close()
       
       val assignedPlanesByLinkId = assignments.toList.map {
@@ -907,7 +911,7 @@ object LinkSource {
       
       val linkConsumptions = new ListBuffer[LinkConsumptionDetails]()
       
-      resultSet.beforeFirst()
+      // No need to rewind; resultSet is at start if not consumed
       while (resultSet.next()) {
         val linkId = resultSet.getInt("link")
         //need to update current link with history link data
