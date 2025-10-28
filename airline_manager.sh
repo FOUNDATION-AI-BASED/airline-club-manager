@@ -8,12 +8,27 @@ CGROUP_NAME="airline_sbt_limit"
 
 # Resource limits configuration
 MAX_MEMORY_MB=3072  # 3GB max per service (increased from 2GB)
-MAX_CPU_RATIO=0.60  # Use 60% of available CPU cores (reduced from 85%)
-MAX_MEMORY_RATIO=0.75  # Use up to 75% of available system memory
+MAX_CPU_RATIO=0.85  # Use 85% of available CPU cores (increased from 75%)
 MAX_PROCESSES=500   # Maximum processes per service (increased from 200)
 SSH_KEEPALIVE_INTERVAL=30  # SSH keepalive seconds
 
-# --- Utility functions (defined early for use in initial calculations) ---
+# Calculate dynamic CPU cores based on system availability
+SYSTEM_CPU_CORES=$(nproc)
+MAX_CPU_CORES=$(echo "$SYSTEM_CPU_CORES * $MAX_CPU_RATIO" | bc -l 2>/dev/null || echo "2")
+if [ -z "$MAX_CPU_CORES" ] || [ "$MAX_CPU_CORES" = "0" ]; then
+    MAX_CPU_CORES=2  # Fallback to 2 cores if calculation fails
+fi
+
+if [ -z "$AIRLINE_DATA_PATH" ]; then
+    echo "Error: airline-data directory not found."
+    exit 1
+fi
+
+if [ -z "$AIRLINE_WEB_PATH" ]; then
+    echo "Error: airline-web directory not found."
+    exit 1
+fi
+
 # Function to get the local IP address
 get_local_ip() {
     hostname -I | awk '{print $1}'
@@ -28,27 +43,6 @@ get_system_cpu_cores() {
 get_system_memory_mb() {
     free -m | awk '/^Mem:/ {print $2}'
 }
-
-# Calculate dynamic CPU cores based on system availability
-SYSTEM_CPU_CORES=$(nproc)
-SYSTEM_MEMORY_MB=$(get_system_memory_mb)
-MAX_CPU_CORES=$(echo "$SYSTEM_CPU_CORES * $MAX_CPU_RATIO" | bc -l 2>/dev/null || echo "2")
-MAX_MEMORY_MB=$(echo "$SYSTEM_MEMORY_MB * $MAX_MEMORY_RATIO" | bc -l 2>/dev/null | awk '{print int($1)}')
-if [ -z "$MAX_CPU_CORES" ] || [ "$MAX_CPU_CORES" = "0" ]; then
-    MAX_CPU_CORES=2  # Fallback to 2 cores if calculation fails
-fi
-if [ -z "$MAX_MEMORY_MB" ] || [ "$MAX_MEMORY_MB" = "0" ]; then
-    MAX_MEMORY_MB=2048  # Fallback to 2GB if calculation fails
-fi
-if [ -z "$AIRLINE_DATA_PATH" ]; then
-    echo "Error: airline-data directory not found."
-    exit 1
-fi
-
-if [ -z "$AIRLINE_WEB_PATH" ]; then
-    echo "Error: airline-web directory not found."
-    exit 1
-fi
 
 # Function to show current system resources
 show_system_resources() {
@@ -400,20 +394,6 @@ initialize_database() {
 start_services() {
     echo "Starting airline-data simulation and airline-web server with resource limits..."
     
-    # Ensure Elasticsearch is running
-    if systemctl is-active --quiet elasticsearch; then
-        echo "Elasticsearch is already running."
-    else
-        echo "Elasticsearch is not running. Attempting to start..."
-        sudo systemctl start elasticsearch
-        sleep 5
-        if systemctl is-active --quiet elasticsearch; then
-            echo "Elasticsearch started successfully."
-        else
-            echo "Failed to start Elasticsearch. Please check logs."
-        fi
-    fi
-
     # Setup resource limits first
     setup_resource_limits
     configure_ssh_protection
@@ -428,9 +408,8 @@ start_services() {
     else
         echo "Launching airline-data MainSimulation with resource limits (logs: airline-data/simulation.log) ..."
         
-        # Create cgroup for data service with proper permissions
-        sudo cgcreate -a kali:kali -t kali:kali -g memory,cpu,pids:$data_cgroup 2>/dev/null || true
-        sudo chown -R kali:kali /sys/fs/cgroup/$data_cgroup 2>/dev/null || true
+        # Create cgroup for data service
+        sudo mkdir -p "/sys/fs/cgroup/$data_cgroup" 2>/dev/null || true
         
         # Set resource limits for data service
         local memory_bytes=$((MAX_MEMORY_MB * 1024 * 1024))
@@ -442,12 +421,18 @@ start_services() {
         # Start with resource limits and monitoring
         (
           cd "$AIRLINE_DATA_PATH" && \
-          # Force fallback to JVM memory limits only, skipping cgexec due to cgroup v2 incompatibility
-          bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError -J-Xmx${MAX_MEMORY_MB}m 'runMain com.patson.MainSimulation' > '$AIRLINE_DATA_PATH/simulation.log' 2>&1" &
+          # Use cgexec if available, otherwise fall back to regular start with JVM limits
+          if command -v cgexec >/dev/null 2>&1; then
+              cgexec -g memory,cpu,pids:$data_cgroup \
+                  bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError 'runMain com.patson.MainSimulation' > '$AIRLINE_DATA_PATH/simulation.log' 2>&1" &
+          else
+              # Fallback with JVM memory limits only
+              bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError -J-Xmx${MAX_MEMORY_MB}m 'runMain com.patson.MainSimulation' > '$AIRLINE_DATA_PATH/simulation.log' 2>&1" &
+          fi
           echo $! > "$AIRLINE_DATA_PATH/simulation.pid"
         )
         
-        main_pid=$(cat "$AIRLINE_DATA_PATH/simulation.pid")
+        # Process is already in cgroup via cgexec, no need to add it again
         
         echo "Airline-data simulation started with PID $main_pid (limited to ${MAX_MEMORY_MB}MB RAM, ${MAX_CPU_CORES} CPU cores)"
         
@@ -470,16 +455,31 @@ start_services() {
     else
         echo "Launching airline-web server with resource limits (logs: airline-web/web.log) ..."
         
-        # Skip cgroup creation for web service due to v2 incompatibility
+        # Create cgroup for web service
+        sudo mkdir -p "/sys/fs/cgroup/$web_cgroup" 2>/dev/null || true
         
-        # Start with JVM memory limits only, binding to all IPv4 interfaces
+        # Set resource limits for web service
+        local memory_bytes=$((MAX_MEMORY_MB * 1024 * 1024))
+        echo $memory_bytes | sudo tee "/sys/fs/cgroup/$web_cgroup/memory.max" 2>/dev/null || true
+        local cpu_quota=$(echo "$MAX_CPU_CORES * 100000" | bc -l 2>/dev/null || echo "300000")
+        echo $cpu_quota | sudo tee "/sys/fs/cgroup/$web_cgroup/cpu.max" 2>/dev/null || true
+        echo $MAX_PROCESSES | sudo tee "/sys/fs/cgroup/$web_cgroup/pids.max" 2>/dev/null || true
+        
+        # Start with resource limits and monitoring
         (
           cd "$AIRLINE_WEB_PATH" && \
-          bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError -J-Xmx${MAX_MEMORY_MB}m 'run -Dhttp.address=0.0.0.0' > '$AIRLINE_WEB_PATH/web.log' 2>&1" &
+          # Use cgexec if available, otherwise fall back to regular start with JVM limits
+          if command -v cgexec >/dev/null 2>&1; then
+              cgexec -g memory,cpu,pids:$web_cgroup \
+                  bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError 'run' > '$AIRLINE_WEB_PATH/web.log' 2>&1" &
+          else
+              # Fallback with JVM memory limits only
+              bash -c "exec sbt -mem ${MAX_MEMORY_MB} -J-XX:+UseG1GC -J-XX:MaxGCPauseMillis=200 -J-XX:+ExitOnOutOfMemoryError -J-Xmx${MAX_MEMORY_MB}m 'run' > '$AIRLINE_WEB_PATH/web.log' 2>&1" &
+          fi
           echo $! > "$AIRLINE_WEB_PATH/web.pid"
         )
         
-        main_pid=$(cat "$AIRLINE_WEB_PATH/web.pid")
+        # Process is already in cgroup via cgexec, no need to add it again
         
         echo "Airline-web server started with PID $main_pid (limited to ${MAX_MEMORY_MB}MB RAM, ${MAX_CPU_CORES} CPU cores)"
         
@@ -514,37 +514,19 @@ stop_services() {
             pid=$(cat "$pidfile")
             if kill -0 "$pid" 2>/dev/null; then
                 echo "Stopping process $pid (from $(basename "$pidfile"))"
-                # Kill all child processes
-                sudo pkill -P "$pid" 2>/dev/null || true
-                sudo kill -TERM "$pid" 2>/dev/null
+                kill -TERM "$pid" 2>/dev/null
                 sleep 2
                 if kill -0 "$pid" 2>/dev/null; then
-                    echo "Force killing process $pid and children"
-                    sudo pkill -KILL -P "$pid" 2>/dev/null || true
-                    sudo kill -KILL "$pid" 2>/dev/null
+                    echo "Force killing process $pid"
+                    kill -KILL "$pid" 2>/dev/null
                 fi
             fi
             rm -f "$pidfile"
         fi
     done
 
-    # Additional cleanup: Kill any processes still listening on port 9000
-    echo "Checking for and killing processes on port 9000..."
-    if command -v fuser >/dev/null 2>&1; then
-        sudo fuser -k 9000/tcp 2>/dev/null || true
-    elif command -v lsof >/dev/null 2>&1; then
-        sudo lsof -ti:9000 | xargs sudo kill -9 2>/dev/null || true
-    fi
-
     # Clean up monitoring processes
-    sudo pkill -f "monitor_resources.*airline" 2>/dev/null || true
-
-    # Verify port 9000 is free
-    if netstat -tuln | grep -q ":9000 "; then
-        echo "Warning: Port 9000 still in use after stop attempt"
-    else
-        echo "Port 9000 successfully freed"
-    fi
+    pkill -f "monitor_resources.*airline" 2>/dev/null || true
 
     echo "Services stopped and resource limits cleaned up."
 }
@@ -633,34 +615,67 @@ Airline Project Management Menu"
     echo "-----------------------------"
 }
 
-# Handle command-line arguments
-if [ $# -gt 0 ]; then
-    case "$1" in
-        start)
-            start_services
-            ;;
-        stop)
-            stop_services
-            ;;
-        status)
-            status_services
-            ;;
-        restart)
-            stop_services
-            sleep 5
-            start_services
-            ;;
-        monitor)
-            monitor_services
-            ;;
-        *)
-            echo "Usage: $0 {start|stop|status|restart|monitor}"
-            echo "For interactive mode, run without arguments."
-            exit 1
-            ;;
-    esac
-    exit 0
-fi
+function status_services() {
+    echo "Checking status of airline-data simulation and airline-web server..."
+
+    # Helper to print status for a service
+    print_status() {
+        local NAME=$1
+        local PID_FILE=$2
+        local LOG_FILE=$3
+        local CGROUP_NAME=$4
+        
+        if [ -f "$PID_FILE" ]; then
+            local PID=$(cat "$PID_FILE")
+            if kill -0 "$PID" 2>/dev/null; then
+                local STATE="RUNNING (PID $PID)"
+                
+                # Get resource usage if cgroup exists
+                local RESOURCE_INFO=""
+                if [ -n "$CGROUP_NAME" ] && [ -d "/sys/fs/cgroup/$CGROUP_NAME" ]; then
+                    local mem_current=$(cat "/sys/fs/cgroup/$CGROUP_NAME/memory.current" 2>/dev/null || echo "0")
+                    local mem_max=$(cat "/sys/fs/cgroup/$CGROUP_NAME/memory.max" 2>/dev/null || echo "0")
+                    local cpu_stat=$(cat "/sys/fs/cgroup/$CGROUP_NAME/cpu.stat" 2>/dev/null | grep "usage_usec" | awk '{print $2}' || echo "0")
+                    
+                    if [ "$mem_current" != "0" ] && [ "$mem_max" != "0" ]; then
+                        local mem_mb=$((mem_current / 1024 / 1024))
+                        local mem_max_mb=$((mem_max / 1024 / 1024))
+                        RESOURCE_INFO=" | Memory: ${mem_mb}MB/${mem_max_mb}MB"
+                    fi
+                fi
+                
+            else
+                local STATE="PID FILE PRESENT BUT PROCESS NOT RUNNING"
+            fi
+        else
+            local STATE="NOT RUNNING"
+        fi
+
+        # quick log scan for error keywords if log exists
+        local ERROR_MSG=""
+        if [ -f "$LOG_FILE" ]; then
+            if grep -E -i -q "(exception|error|fatal)" "$LOG_FILE"; then
+                ERROR_MSG=" | Recent log indicates ERRORS"
+            fi
+        fi
+        echo "- $NAME : $STATE$RESOURCE_INFO$ERROR_MSG (log: $LOG_FILE)"
+    }
+
+    print_status "airline-data simulation" "$AIRLINE_DATA_PATH/simulation.pid" "$AIRLINE_DATA_PATH/simulation.log" "${CGROUP_NAME}_data"
+    print_status "airline-web server" "$AIRLINE_WEB_PATH/web.pid" "$AIRLINE_WEB_PATH/web.log" "${CGROUP_NAME}_web"
+    
+    # Show overall system resource usage
+    echo ""
+    echo "System Resource Status:"
+    local total_mem=$(free -m | awk 'NR==2{print $2}')
+    local used_mem=$(free -m | awk 'NR==2{print $3}')
+    local mem_percent=$(echo "scale=1; $used_mem * 100 / $total_mem" | bc -l 2>/dev/null || echo "N/A")
+    local load_avg=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | sed 's/,//')
+    echo "- Memory: ${used_mem}MB/${total_mem}MB (${mem_percent}%) | Load: ${load_avg}"
+
+    echo "Status check complete."
+    read -p "Press Enter to return to the menu..."
+}
 
 while true; do
     show_menu

@@ -6,7 +6,7 @@ import com.patson.data.Constants._
 import scala.collection.mutable.ListBuffer
 import java.util.Calendar
 import java.text.SimpleDateFormat
-import java.sql.{Statement, ResultSet}
+import java.sql.Statement
 import java.util.Date
 import com.patson.util.{AirlineCache, UserCache}
 
@@ -73,7 +73,7 @@ object UserSource {
         queryString += criteria.last._1 + " = ?"
       }
       
-      val preparedStatement = connection.prepareStatement(queryString, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
+      val preparedStatement = connection.prepareStatement(queryString)
       
       for (i <- 0 until criteria.size) {
         preparedStatement.setObject(i + 1, criteria(i)._2)
@@ -366,40 +366,6 @@ object UserSource {
       preparedStatement.close()
 
       result.toList
-    } finally {
-      connection.close()
-    }
-  }
-
-  def isUserNameAvailable(userName: String): Boolean = {
-    val connection = Meta.getConnection()
-    try {
-      val query = s"SELECT COUNT(*) FROM $USER_TABLE WHERE LOWER(user_name) = ?"
-      val preparedStatement = connection.prepareStatement(query)
-      preparedStatement.setString(1, userName)
-      val resultSet = preparedStatement.executeQuery()
-      resultSet.next()
-      val count = resultSet.getInt(1)
-      resultSet.close()
-      preparedStatement.close()
-      count == 0
-    } finally {
-      connection.close()
-    }
-  }
-
-  def isAirlineNameAvailable(airlineName: String): Boolean = {
-    val connection = Meta.getConnection()
-    try {
-      val query = s"SELECT COUNT(*) FROM $AIRLINE_TABLE WHERE LOWER(name) = ?"
-      val preparedStatement = connection.prepareStatement(query)
-      preparedStatement.setString(1, airlineName)
-      val resultSet = preparedStatement.executeQuery()
-      resultSet.next()
-      val count = resultSet.getInt(1)
-      resultSet.close()
-      preparedStatement.close()
-      count == 0
     } finally {
       connection.close()
     }

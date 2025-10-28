@@ -883,32 +883,17 @@ img.flag {
 
 /* Loading spinner */
 .loadingSpinner {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(255,255,255,0.7);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-}
-.loadingSpinner.active {
-    display: flex;
-}
-.loadingSpinner::after {
-    content: '';
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: var(--loading-spinner-background)
+                url('/assets/images/icons/spinning-wheel.gif')
+                50% 50%
+                no-repeat;
 }
 
 .snowflake {

@@ -71,27 +71,25 @@ object AirportAssetSource {
       val idToProperties = loadAirportPropertiesByAssetIds(ids.toList)
 
       val currentCycle = CycleSource.loadCycle()
-      // Re-execute query for second pass instead of beforeFirst
-      resultSet.close()
-      val resultSet2 = preparedStatement.executeQuery()
-      while (resultSet2.next()) {
-        val assetType = AirportAssetType.withName(resultSet2.getString("asset_type"))
-        val id = resultSet2.getInt("id") //same id as blueprint
-        val airport = AirportCache.getAirport(resultSet2.getInt("airport"), false).get
+      resultSet.beforeFirst()
+      while (resultSet.next()) {
+        val assetType = AirportAssetType.withName(resultSet.getString("asset_type"))
+        val id = resultSet.getInt("id") //same id as blueprint
+        val airport = AirportCache.getAirport(resultSet.getInt("airport"), false).get
 
-        val airline = AirlineCache.getAirline(resultSet2.getInt("airline"))
-        val name = resultSet2.getString("name")
-        val level = resultSet2.getInt("level")
-        val completionCycle = resultSet2.getInt("completion_cycle")
-        val revenue = resultSet2.getLong("revenue")
-        val expense = resultSet2.getLong("expense")
-        val roi = resultSet2.getDouble("roi")
-        val upgradeApplied = resultSet2.getBoolean("upgrade_applied")
+        val airline = AirlineCache.getAirline(resultSet.getInt("airline"))
+        val name = resultSet.getString("name")
+        val level = resultSet.getInt("level")
+        val completionCycle = resultSet.getInt("completion_cycle")
+        val revenue = resultSet.getLong("revenue")
+        val expense = resultSet.getLong("expense")
+        val roi = resultSet.getDouble("roi")
+        val upgradeApplied = resultSet.getBoolean("upgrade_applied")
 
         assets += AirportAsset.getAirportAsset(id, airport, assetType, airline, name, level, Some(completionCycle), idToBoost.getOrElse(id, List.empty), revenue, expense, roi, upgradeApplied, idToProperties.getOrElse(id, Map.empty), currentCycle)
       }
 
-      resultSet2.close()
+      resultSet.close()
       preparedStatement.close()
 
       assets.toList
