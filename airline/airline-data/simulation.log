@@ -1,0 +1,695 @@
+[info] welcome to sbt 1.9.9 (Ubuntu Java 11.0.28)
+[info] loading project definition from /home/kali/airline/airline-data/project/project
+[info] loading settings for project airline-data-build from plugins.sbt ...
+[info] loading project definition from /home/kali/airline/airline-data/project
+[info] loading settings for project airline-data from build.sbt ...
+[info] set current project to airline-data (in build file:/home/kali/airline/airline-data/)
+[info] compiling 1 Scala source to /home/kali/airline/airline-data/target/scala-2.13/classes ...
+[warn] 2 deprecations (since 2.13.3); re-run with -deprecation for details
+[warn] one warning found
+[info] done compiling
+[info] running com.patson.MainSimulation 
+!!!!!!!!!!!!!!!DB HOST IS 127.0.0.1
+!!!!!!!!!!!!!!!FINAL DB str jdbc:mysql://127.0.0.1/airline_v2_1?rewriteBatchedStatements=true&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true with user sa
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+Oct 29, 2025 4:14:56 AM com.mchange.v2.log.MLog 
+INFO: MLog clients using java 1.4+ standard logging.
+Oct 29, 2025 4:14:56 AM com.mchange.v2.c3p0.C3P0Registry 
+INFO: Initializing c3p0-0.9.5.5 [built 11-December-2019 22:18:33 -0800; debug? true; trace: 10]
+Oct 29, 2025 4:14:56 AM com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource 
+INFO: Initializing c3p0 pool... com.mchange.v2.c3p0.ComboPooledDataSource [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, dataSourceName -> z8kfsxbect8m8t1en824r|6de45bb8, debugUnreturnedConnectionStackTraces -> false, description -> null, driverClass -> null, extensions -> {}, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, forceUseNamedDriverClass -> false, identityToken -> z8kfsxbect8m8t1en824r|6de45bb8, idleConnectionTestPeriod -> 0, initialPoolSize -> 3, jdbcUrl -> jdbc:mysql://127.0.0.1/airline_v2_1?rewriteBatchedStatements=true&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 100, maxStatements -> 0, maxStatementsPerConnection -> 0, minPoolSize -> 3, numHelperThreads -> 3, preferredTestQuery -> null, privilegeSpawnedThreads -> false, properties -> {password=******, user=******}, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> true, unreturnedConnectionTimeout -> 0, userOverrides -> {}, usesTraditionalReflectiveProxies -> false ]
+cycle 0 starting!
+Generating Gaussian pool...
+Finished generating pool of 1000000
+ pv 0.0 pp 54.74 v 1.7179839268525985 p 56.4579839268526
+Interest rate simulation [previous rate : 0.16, new rate : 0.16]
+[WARN] [10/29/2025 04:14:59.165] [pool-8-thread-2] [org.apache.pekko.remote.RemoteActorRefProvider] Using the 'remote' ActorRefProvider directly, which is a low-level layer. For most use cases, the 'cluster' abstraction on top of remoting is more suitable instead.
+[WARN] [10/29/2025 04:14:59.168] [pool-8-thread-2] [org.apache.pekko.remote.RemoteActorRefProvider] Pekko Cluster not in use - Using Pekko Cluster is recommended if you need remote watch and deploy.
+[INFO] [10/29/2025 04:14:59.810] [pool-8-thread-2] [ArteryTransport(pekko://websocketActorSystem)] Remoting started with transport [Artery tcp]; listening on address [pekko://websocketActorSystem@127.0.0.1:2552] and bound to [pekko://websocketActorSystem@0.0.0.0:2552] with UID [-8215193233062249695]
+registered the mainActor to the event stream!
+Bridge actor: received from simulation that com.patson.stream.CycleStart
+Loading airports
+Loaded 3819 airports
+starting resetting strict threshold - active before Mon Sep 29 04:15:39 UTC 2025; and generous threshold - active before Thu Jul 31 04:15:39 UTC 2025
+Event simulation
+Olympics airport(s) within radius: HashMap(Airport(JHB,WMKJ,Senai International Airport,1.64131,103.669998,MY,Johor Bahru,AS,5,11307,1657313,3800,3275) -> List(Airport(JHB,WMKJ,Senai International Airport,1.64131,103.669998,MY,Johor Bahru,AS,5,11307,1657313,3800,3275)), Airport(MEL,YMML,Melbourne International Airport,-37.673302,144.843002,AU,Melbourne,OC,6,61925,3677425,3656,3788) -> List(Airport(MBW,YMMB,Melbourne Moorabbin Airport,-37.975799560546875,145.1020050048828,AU,Melbourne,OC,2,61925,384640,1335,3376), Airport(MEB,YMEN,Melbourne Essendon Airport,-37.7281,144.901993,AU,Melbourne,OC,2,61925,392245,1920,3388), Airport(AVV,YMAV,Avalon Airport,-38.039398,144.468994,AU,Melbourne,OC,5,61925,1073717,3048,3653), Airport(MEL,YMML,Melbourne International Airport,-37.673302,144.843002,AU,Melbourne,OC,6,61925,3677425,3656,3788)), Airport(ALC,LEAL,Alicante International Airport,38.28219985961914,-0.5581560134887695,ES,Alicante,EU,7,29767,3452234,3000,3728) -> List(Airport(RMU,LEMI,Región de Murcia International Airport,37.803,-1.125,ES,Corvera,EU,3,29767,746159,3000,3348), Airport(ALC,LEAL,Alicante International Airport,38.28219985961914,-0.5581560134887695,ES,Alicante,EU,7,29767,3452234,3000,3728)), Airport(PKX,ZBAD,Beijing Daxing International Airport,39.509945,116.41092,CN,Beijing / Langfang,AS,6,7590,6585186,3800,3605) -> List(Airport(PKX,ZBAD,Beijing Daxing International Airport,39.509945,116.41092,CN,Beijing / Langfang,AS,6,7590,6585186,3800,3605), Airport(PEK,ZBAA,Beijing Capital International Airport,40.080101013183594,116.58499908447266,CN,Beijing,AS,9,7590,12940988,3800,3720)), Airport(DXB,OMDB,Dubai International Airport,25.2527999878,55.3643989563,AE,Dubai,AS,9,43962,2956730,4447,3752) -> List(Airport(RKT,OMRK,Ras Al Khaimah International Airport,25.613500595092773,55.93880081176758,AE,Ras Al Khaimah,AS,5,43962,411778,3760,3258), Airport(DWC,OMDW,Al Maktoum International Airport,24.896356,55.161389,AE,Jebel Ali,AS,6,43962,843145,4500,3522), Airport(SHJ,OMSJ,Sharjah International Airport,25.32859992980957,55.5172004699707,AE,Sharjah,AS,6,43962,1076551,4060,3593), Airport(DXB,OMDB,Dubai International Airport,25.2527999878,55.3643989563,AE,Dubai,AS,9,43962,2956730,4447,3752)), Airport(HKG,VHHH,Hong Kong International Airport,22.308901,113.915001,HK,Hong Kong,AS,9,40169,9589727,3800,3814) -> List(Airport(HKG,VHHH,Hong Kong International Airport,22.308901,113.915001,HK,Hong Kong,AS,9,40169,9589727,3800,3814)))
+Loading all links
+Finished loading all links
+DONE with demand total demand: 43033315
+Total active airports: 815
+Remove demand that is not covered by active airports, before 5062580
+After pruning : 595951
+[warn] In the last 9 seconds, 5.178 (62.2%) were spent in GC. [Heap: 2.16GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Simple Cost modifiers Map()
+Run 0 demand chunk count 595951
+links: 576
+Find required routes...Done!
+Available links: 576
+Total passenger groups : 14453
+Iteration count : 4
+..........10% ..........20% ..........30% ..........40% ..........50% ..........60% ..........70% ..........80% ..........90% ..........100% Done!
+Run 1 demand chunk count 27
+links: 576
+Find required routes...Done!
+Available links: 576
+Total passenger groups : 18
+Iteration count : 4
+..........10% ..........20% Done!
+Run 2 demand chunk count 5
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 3
+Iteration count : 4
+.....Done!
+Run 3 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 4 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 5 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 6 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 7 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 8 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 9 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Total chunks that consume something 15
+Total missed chunks 5062565
+Total transported pax 186
+Total missed pax 43033129
+Collapsed consumption map size: 12
+Generating flight stats
+Saving generated stats to DB
+Deleted 0 link statistics records
+Generating country market share
+Saving country market share to DB
+Generating Olympics stats
+Generated olympics country stats
+Saving 12 consumptions
+Rotating tables
+Finished rotating tables
+Saved all consumptions. Took 20781 millisecs
+Calculating profits by links
+Finished calculation on profits by links. Took 1838 millisecs
+Purged alerts with no corresponding links... 0
+Calculating Lounge usage
+Airport simulation
+starting airport simulation
+loading all airports
+Adjust loyalist by link consumptions
+Decaying (update) 0 loyalists entries
+Decaying (deletion) 0 loyalists entries
+Updating 2 loyalists entries
+Deleting 0 loyalists entries
+Computing loyalist info with 2 entries
+Ranking changes count : 2
+Done computing champions
+Purging loyalist history before cycle -500
+Saving 2 loyalist history entries
+Checking lounge status
+Finished simulation of loyalty by link consumption
+Finished loyalist simulation
+[warn] In the last 10 seconds, 5.015 (52.4%) were spent in GC. [Heap: 1.24GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 10 seconds, 7.267 (76.4%) were spent in GC. [Heap: 1.16GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 7.46 (84.0%) were spent in GC. [Heap: 1.02GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 26 seconds, 24.49 (94.7%) were spent in GC. [Heap: 0.94GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 12 seconds, 10.043 (85.4%) were spent in GC. [Heap: 0.85GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Airport assets simulation
+Bridge actor: received from simulation that com.patson.stream.DirectDemandInfo
+Airplane simulation
+starting airplane simulation
+loading all airplanes
+finished loading all airplanes
+Finished updating all airplanes expected 3 actual 3
+Start renewing airplanes
+Finished renewing airplanes
+Start retiring airplanes
+Finished retiring 0 airplanes
+Airline simulation
+Airline(test,false,1) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(mentosair,false,2) profit is: -575660 existing balance (not updated yet) 148964568 reputation 24.0 cash flow -1148089
+Airline(mentosairs,false,3) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(mentoss,false,4) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(time,false,5) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(AirTest99,false,6) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(Test Air 100,false,7) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(mentor,false,8) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Country simulation
+starting country simulation
+Alliance simulation
+Airplane model simulation
+starting airplane model simulation (discounts)
+loading all airplanes
+Finished airplane model simulation
+Purging logs
+Purging link history
+Deleted 0 link change history records
+Purging airline modifier
+cycle 0 spent 399 secs
+Oil simulation
+ pv 0.0 pp 56.46 v -0.4524865243433494 p 56.00751347565665
+Loan simulation
+Interest rate simulation [previous rate : 0.16, new rate : 0.16]
+Delegate simulation
+Deleted 0 busy delegate records
+Post cycle link simulation
+Refreshing link capacity and frequency to find discrepancies
+Finished loading both the simple and full links
+Post cycle done 1
+Publish Cycle Complete message
+Bridge actor: received from simulation that com.patson.stream.CycleCompleted
+[WARN] [10/29/2025 04:42:44.702] [websocketActorSystem-pekko.remote.default-remote-dispatcher-9] [org.apache.pekko.stream.Log(pekko://websocketActorSystem/system/Materializers/StreamSupervisor-2)] [outbound connection to [pekko://websocketActorSystem@192.168.50.15:10999], control stream] Upstream failed, cause: StreamTcpException: Tcp command [Connect(192.168.50.15:10999,None,List(),Some(5000 milliseconds),true)] failed because of org.apache.pekko.io.TcpOutgoingConnection$$anon$2: Connect timeout of Some(5000 milliseconds) expired
+[WARN] [10/29/2025 04:42:44.704] [websocketActorSystem-pekko.remote.default-remote-dispatcher-7] [org.apache.pekko.stream.Log(pekko://websocketActorSystem/system/Materializers/StreamSupervisor-2)] [outbound connection to [pekko://websocketActorSystem@192.168.50.15:10999], message stream] Upstream failed, cause: StreamTcpException: Tcp command [Connect(192.168.50.15:10999,None,List(),Some(5000 milliseconds),true)] failed because of org.apache.pekko.io.TcpOutgoingConnection$$anon$2: Connect timeout of Some(5000 milliseconds) expired
+[warn] In the last 1315 seconds, 7.503 (0.6%) were spent in GC. [Heap: 2.13GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[INFO] [pekkoDeadLetter][10/29/2025 04:42:45.904] [websocketActorSystem-pekko.actor.default-dispatcher-12] [pekko://websocketActorSystem/system/IO-TCP/selectors/$a/3] Message [org.apache.pekko.io.dns.DnsProtocol$Resolved] from Actor[pekko://websocketActorSystem/system/IO-DNS/inet-address/$b#-1880129070] to Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/3#-248711726] was not delivered. [1] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/3#-248711726] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+[INFO] [pekkoDeadLetter][10/29/2025 04:42:45.905] [websocketActorSystem-pekko.actor.default-dispatcher-12] [pekko://websocketActorSystem/system/IO-TCP/selectors/$a/4] Message [org.apache.pekko.io.dns.DnsProtocol$Resolved] from Actor[pekko://websocketActorSystem/system/IO-DNS/inet-address/$b#-1880129070] to Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/4#-624506233] was not delivered. [2] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/4#-624506233] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+cycle 1 starting!
+Bridge actor: received from simulation that com.patson.stream.CycleStart
+Loading airports
+Loaded 3819 airports
+starting resetting strict threshold - active before Mon Sep 29 04:46:07 UTC 2025; and generous threshold - active before Thu Jul 31 04:46:07 UTC 2025
+Event simulation
+Loading all links
+Finished loading all links
+[warn] In the last 10 seconds, 5.036 (52.6%) were spent in GC. [Heap: 2.06GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 7.704 (85.8%) were spent in GC. [Heap: 1.99GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 7 seconds, 5.724 (91.3%) were spent in GC. [Heap: 1.93GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 7.017 (84.9%) were spent in GC. [Heap: 1.85GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 17 seconds, 15.669 (93.1%) were spent in GC. [Heap: 1.78GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 14 seconds, 12.396 (94.3%) were spent in GC. [Heap: 1.69GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 20 seconds, 19.059 (96.1%) were spent in GC. [Heap: 1.61GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 22 seconds, 20.812 (96.7%) were spent in GC. [Heap: 1.52GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 12 seconds, 9.498 (82.8%) were spent in GC. [Heap: 1.49GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+DONE with demand total demand: 43033315
+Total active airports: 815
+Remove demand that is not covered by active airports, before 5062288
+[warn] In the last 42 seconds, 5.326 (12.7%) were spent in GC. [Heap: 1.44GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+After pruning : 595826
+Simple Cost modifiers Map()
+Run 0 demand chunk count 595826
+links: 576
+Find required routes...Done!
+Available links: 576
+Total passenger groups : 14445
+Iteration count : 4
+.[warn] In the last 41 seconds, 8.747 (21.3%) were spent in GC. [Heap: 1.39GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+....[warn] In the last 12 seconds, 10.618 (93.8%) were spent in GC. [Heap: 1.38GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+.....10% ..........20% ..........30% ..........40% ..........50% ..........60% ..........70% ..........80% ..........90% ..........100% Done!
+Run 1 demand chunk count 29
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 23
+Iteration count : 4
+..........10% ...........20% ..Done!
+Run 2 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 4
+Done!
+Run 3 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 4 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 5 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 6 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 7 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 8 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 9 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Total chunks that consume something 15
+Total missed chunks 5062274
+Total transported pax 186
+Total missed pax 43033129
+Collapsed consumption map size: 12
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 44 seconds, 33.775 (77.2%) were spent in GC. [Heap: 1.14GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 152 seconds, 34.007 (22.4%) were spent in GC. [Heap: 1.61GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 35 seconds, 33.328 (96.3%) were spent in GC. [Heap: 1.49GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 45 seconds, 20.987 (47.2%) were spent in GC. [Heap: 1.34GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 34 seconds, 31.903 (94.4%) were spent in GC. [Heap: 1.22GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 6.076 (73.0%) were spent in GC. [Heap: 1.21GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 6.847 (81.4%) were spent in GC. [Heap: 1.17GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 8 seconds, 7.009 (92.7%) were spent in GC. [Heap: 1.12GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 7 seconds, 5.827 (90.8%) were spent in GC. [Heap: 1.10GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 10 seconds, 7.18 (77.9%) were spent in GC. [Heap: 1.04GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 7 seconds, 5.554 (85.7%) were spent in GC. [Heap: 1.00GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 5.421 (67.6%) were spent in GC. [Heap: 0.93GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 5.834 (70.8%) were spent in GC. [Heap: 0.89GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 5.856 (71.1%) were spent in GC. [Heap: 0.84GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 6.818 (75.8%) were spent in GC. [Heap: 0.80GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Generating flight stats
+Saving generated stats to DB
+Deleted 0 link statistics records
+Generating country market share
+Saving country market share to DB
+Generating Olympics stats
+Generated olympics country stats
+Saving 12 consumptions
+Rotating tables
+Finished rotating tables
+Saved all consumptions. Took 23086 millisecs
+Calculating profits by links
+Finished calculation on profits by links. Took 7639 millisecs
+Purged alerts with no corresponding links... 0
+Calculating Lounge usage
+Airport simulation
+starting airport simulation
+loading all airports
+Adjust loyalist by link consumptions
+Decaying (update) 2 loyalists entries
+Decaying (deletion) 0 loyalists entries
+Updating 2 loyalists entries
+Deleting 0 loyalists entries
+Computing loyalist info with 2 entries
+Ranking changes count : 0
+Done computing champions
+Checking lounge status
+Finished simulation of loyalty by link consumption
+Finished loyalist simulation
+[warn] In the last 10 seconds, 5.678 (58.8%) were spent in GC. [Heap: 0.74GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 7.204 (85.1%) were spent in GC. [Heap: 0.67GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 25 seconds, 22.632 (91.6%) were spent in GC. [Heap: 0.42GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 41 seconds, 40.108 (98.1%) were spent in GC. [Heap: 0.37GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 23 seconds, 19.736 (89.1%) were spent in GC. [Heap: 0.29GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 29 seconds, 27.122 (96.1%) were spent in GC. [Heap: 0.20GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 11 seconds, 8.927 (85.3%) were spent in GC. [Heap: 0.17GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Airport assets simulation
+Bridge actor: forwarding direct demand info to pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor
+Bridge actor: received from simulation that com.patson.stream.DirectDemandInfo
+Airplane simulation
+starting airplane simulation
+loading all airplanes
+finished loading all airplanes
+Finished updating all airplanes expected 3 actual 3
+Start renewing airplanes
+Finished renewing airplanes
+Start retiring airplanes
+Finished retiring 0 airplanes
+Airline simulation
+Airline(test,false,1) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(mentosair,false,2) profit is: -574268 existing balance (not updated yet) 147816479 reputation 23.0 cash flow -1148128
+Airline(mentosairs,false,3) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(mentoss,false,4) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(time,false,5) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(AirTest99,false,6) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(Test Air 100,false,7) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Airline(mentor,false,8) profit is: 0 existing balance (not updated yet) 0 reputation 0.0 cash flow 0
+Country simulation
+starting country simulation
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Alliance simulation
+Airplane model simulation
+starting airplane model simulation (discounts)
+loading all airplanes
+Finished airplane model simulation
+Purging logs
+Purging link history
+Deleted 0 link change history records
+Purging airline modifier
+cycle 1 spent 1110 secs
+Oil simulation
+ pv -0.45000000000000284 pp 56.01 v -3.0191030394247322 p 52.99089696057526
+Loan simulation
+Interest rate simulation [previous rate : 0.16, new rate : 0.16]
+Delegate simulation
+Deleted 0 busy delegate records
+Post cycle link simulation
+Refreshing link capacity and frequency to find discrepancies
+Finished loading both the simple and full links
+Post cycle done 2
+Publish Cycle Complete message
+Bridge actor: forwarding CycleCompleted(1,1761714206473) back to pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor
+Bridge actor: forwarding CycleInfo(1,0.0,2509207) back to pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor
+Bridge actor: received from simulation that com.patson.stream.CycleCompleted
+cycle 2 starting!
+Loading airports
+Bridge actor: received from simulation that com.patson.stream.CycleStart
+[warn] In the last 1023 seconds, 12.311 (1.2%) were spent in GC. [Heap: 0.16GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Loaded 3819 airports
+starting resetting strict threshold - active before Mon Sep 29 05:21:15 UTC 2025; and generous threshold - active before Thu Jul 31 05:21:15 UTC 2025
+Event simulation
+Loading all links
+Finished loading all links
+[warn] In the last 4117 seconds, 96.957 (2.4%) were spent in GC. [Heap: 2.87GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 10 seconds, 6.188 (67.4%) were spent in GC. [Heap: 2.85GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 8 seconds, 6.731 (92.5%) were spent in GC. [Heap: 2.77GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 9 seconds, 7.806 (93.4%) were spent in GC. [Heap: 2.71GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 8 seconds, 7.212 (92.3%) were spent in GC. [Heap: 2.64GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 30 seconds, 28.293 (94.9%) were spent in GC. [Heap: 2.55GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 29 seconds, 26.426 (94.1%) were spent in GC. [Heap: 2.47GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 29 seconds, 27.522 (96.1%) were spent in GC. [Heap: 2.38GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 22 seconds, 20.683 (94.9%) were spent in GC. [Heap: 2.30GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+DONE with demand total demand: 43033315
+Total active airports: 815
+Remove demand that is not covered by active airports, before 5062256
+After pruning : 595730
+Simple Cost modifiers Map()
+Run 0 demand chunk count 595730
+links: 576
+Find required routes...Done!
+Available links: 576
+Total passenger groups : 14449
+Iteration count : 4
+..[warn] In the last 15 seconds, 6.062 (42.4%) were spent in GC. [Heap: 2.17GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+........10% ..........20% ..........30% ..........40% ..........50% ..........60% ..........70% ..........80% ..........90% ..........100% Done!
+Run 1 demand chunk count 33
+links: 576
+Find required routes...Done!
+Available links: 576
+Total passenger groups : 18
+Iteration count : 4
+..........10% ..........20% .Done!
+Run 2 demand chunk count 25
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 14
+Iteration count : 4
+..........10% .......Done!
+Run 3 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 4 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 5 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 5
+Done!
+Run 6 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 7 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 8 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Run 9 demand chunk count 0
+links: 576
+Find required routes...Done!
+Available links: 575
+Total passenger groups : 0
+Iteration count : 6
+Done!
+Total chunks that consume something 14
+Total missed chunks 5062243
+Total transported pax 186
+Total missed pax 43033129
+Collapsed consumption map size: 11
+[warn] In the last 63 seconds, 10.166 (16.2%) were spent in GC. [Heap: 2.04GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[warn] In the last 67 seconds, 46.982 (70.2%) were spent in GC. [Heap: 1.90GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 275 seconds, 140.978 (51.4%) were spent in GC. [Heap: 1.74GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 169 seconds, 158.621 (94.2%) were spent in GC. [Heap: 1.62GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 190 seconds, 102.393 (54.2%) were spent in GC. [Heap: 1.50GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+[INFO] [10/29/2025 05:44:05.864] [websocketActorSystem-pekko.actor.default-dispatcher-12] [Association(pekko://websocketActorSystem)] Stopping idle outbound control stream to [pekko://websocketActorSystem@192.168.50.15:10999]
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [10/29/2025 05:47:20.782] [websocketActorSystem-pekko.actor.default-dispatcher-12] [Association(pekko://websocketActorSystem)] Stopping idle outbound stream [2] to [pekko://websocketActorSystem@192.168.50.15:10999]
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[WARN] [10/29/2025 05:52:23.180] [websocketActorSystem-pekko.remote.default-remote-dispatcher-28] [org.apache.pekko.stream.Log(pekko://websocketActorSystem/system/Materializers/StreamSupervisor-2)] [outbound connection to [pekko://websocketActorSystem@192.168.50.15:10999], message stream] Upstream failed, cause: StreamTcpException: The connection closed with error: Connection reset by peer
+[INFO] [10/29/2025 05:57:54.643] [websocketActorSystem-pekko.actor.default-dispatcher-12] [Association(pekko://websocketActorSystem)] Stopping idle outbound control stream to [pekko://websocketActorSystem@192.168.50.15:10999]
+[warn] In the last 1065 seconds, 323.958 (30.4%) were spent in GC. [Heap: 1.39GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [10/29/2025 05:57:55.482] [websocketActorSystem-pekko.actor.default-dispatcher-12] [Association(pekko://websocketActorSystem)] Stopping idle outbound stream [2] to [pekko://websocketActorSystem@192.168.50.15:10999]
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [pekkoDeadLetter][10/29/2025 05:58:06.896] [websocketActorSystem-pekko.actor.default-dispatcher-36] [pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor] Message [com.patson.stream.KeepAlivePong$] from Actor[pekko://websocketActorSystem/user/bridgeActor#-1567611301] to Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075] was not delivered. [3] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [pekkoDeadLetter][10/29/2025 05:58:07.435] [websocketActorSystem-pekko.actor.default-dispatcher-36] [pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor] Message [com.patson.stream.KeepAlivePong$] from Actor[pekko://websocketActorSystem/user/bridgeActor#-1567611301] to Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075] was not delivered. [4] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+[INFO] [pekkoDeadLetter][10/29/2025 05:58:07.447] [websocketActorSystem-pekko.actor.default-dispatcher-36] [pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor] Message [com.patson.stream.KeepAlivePong$] from Actor[pekko://websocketActorSystem/user/bridgeActor#-1567611301] to Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075] was not delivered. [5] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 688 seconds, 100.12 (14.6%) were spent in GC. [Heap: 1.36GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 304 seconds, 55.864 (18.4%) were spent in GC. [Heap: 1.36GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 222 seconds, 15.55 (7.0%) were spent in GC. [Heap: 1.35GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 169 seconds, 35.311 (21.0%) were spent in GC. [Heap: 1.34GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 131 seconds, 34.309 (26.2%) were spent in GC. [Heap: 1.33GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 140 seconds, 57.223 (41.0%) were spent in GC. [Heap: 1.32GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 465 seconds, 30.538 (6.6%) were spent in GC. [Heap: 1.73GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 139 seconds, 17.819 (12.9%) were spent in GC. [Heap: 1.71GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 219 seconds, 52.305 (24.0%) were spent in GC. [Heap: 1.70GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 149 seconds, 48.017 (32.4%) were spent in GC. [Heap: 1.68GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 256 seconds, 59.567 (23.3%) were spent in GC. [Heap: 1.68GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 260 seconds, 50.176 (19.3%) were spent in GC. [Heap: 1.67GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 218 seconds, 51.944 (23.9%) were spent in GC. [Heap: 1.65GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 172 seconds, 36.734 (21.4%) were spent in GC. [Heap: 1.64GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 172 seconds, 34.273 (20.0%) were spent in GC. [Heap: 1.61GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 190 seconds, 62.623 (33.1%) were spent in GC. [Heap: 1.61GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 195 seconds, 46.01 (23.6%) were spent in GC. [Heap: 1.60GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 183 seconds, 42.344 (23.3%) were spent in GC. [Heap: 1.57GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 295 seconds, 59.47 (20.2%) were spent in GC. [Heap: 1.56GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 316 seconds, 33.823 (10.7%) were spent in GC. [Heap: 1.55GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 305 seconds, 68.697 (22.5%) were spent in GC. [Heap: 1.52GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [10/29/2025 07:39:59.652] [websocketActorSystem-pekko.actor.default-dispatcher-12] [Association(pekko://websocketActorSystem)] Stopping idle outbound control stream to [pekko://websocketActorSystem@192.168.50.15:10999]
+[INFO] [10/29/2025 07:40:12.070] [websocketActorSystem-pekko.actor.default-dispatcher-12] [Association(pekko://websocketActorSystem)] Stopping idle outbound stream [2] to [pekko://websocketActorSystem@192.168.50.15:10999]
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 945 seconds, 219.653 (23.3%) were spent in GC. [Heap: 1.51GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[WARN] [10/29/2025 07:44:04.837] [websocketActorSystem-pekko.remote.default-remote-dispatcher-49] [org.apache.pekko.stream.Log(pekko://websocketActorSystem/system/Materializers/StreamSupervisor-2)] [outbound connection to [pekko://websocketActorSystem@192.168.50.15:10999], message stream] Upstream failed, cause: StreamTcpException: The connection has been aborted
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [10/29/2025 07:48:06.950] [websocketActorSystem-pekko.actor.default-dispatcher-53] [Association(pekko://websocketActorSystem)] Stopping idle outbound control stream to [pekko://websocketActorSystem@192.168.50.15:10999]Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+
+[INFO] [10/29/2025 07:48:07.041] [websocketActorSystem-pekko.actor.default-dispatcher-53] [Association(pekko://websocketActorSystem)] Stopping idle outbound stream [2] to [pekko://websocketActorSystem@192.168.50.15:10999]
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[WARN] [10/29/2025 07:48:49.799] [websocketActorSystem-pekko.remote.default-remote-dispatcher-49] [org.apache.pekko.stream.Log(pekko://websocketActorSystem/system/Materializers/StreamSupervisor-2)] [outbound connection to [pekko://websocketActorSystem@192.168.50.15:10999], message stream] Upstream failed, cause: Association$OutboundStreamStopIdleSignal$: 
+[INFO] [pekkoDeadLetter][10/29/2025 07:50:40.186] [websocketActorSystem-pekko.actor.default-dispatcher-54] [pekko://websocketActorSystem/deadLetters] Message [org.apache.pekko.io.Tcp$CommandFailed] from Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/14#803007031] to Actor[pekko://websocketActorSystem/deadLetters] was not delivered. [6] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem/deadLetters] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+[INFO] [10/29/2025 07:50:51.952] [websocketActorSystem-pekko.actor.default-dispatcher-53] [Association(pekko://websocketActorSystem)] Stopping idle outbound control stream to [pekko://websocketActorSystem@192.168.50.15:10999]
+[INFO] [pekkoDeadLetter][10/29/2025 07:50:53.393] [websocketActorSystem-pekko.actor.default-dispatcher-54] [pekko://websocketActorSystem/system/IO-TCP/selectors/$a/14] Message [org.apache.pekko.io.dns.DnsProtocol$Resolved] from Actor[pekko://websocketActorSystem/system/IO-DNS/inet-address/$b#-1880129070] to Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/14#803007031] was not delivered. [7] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/14#803007031] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [10/29/2025 08:01:42.362] [websocketActorSystem-pekko.actor.default-dispatcher-56] [Association(pekko://websocketActorSystem)] Stopping idle outbound control stream to [pekko://websocketActorSystem@192.168.50.15:10999]
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [10/29/2025 08:02:25.900] [websocketActorSystem-pekko.actor.default-dispatcher-56] [Association(pekko://websocketActorSystem)] Stopping idle outbound stream [2] to [pekko://websocketActorSystem@192.168.50.15:10999]
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[warn] In the last 1297 seconds, 280.953 (21.7%) were spent in GC. [Heap: 1.49GB free of 3.00GB, max 3.00GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [pekkoDeadLetter][10/29/2025 08:05:10.875] [websocketActorSystem-pekko.actor.default-dispatcher-54] [pekko://websocketActorSystem/system/IO-TCP/selectors/$a/16] Message [org.apache.pekko.io.dns.DnsProtocol$Resolved] from Actor[pekko://websocketActorSystem/system/IO-DNS/inet-address/$b#-1880129070] to Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/16#1676868143] was not delivered. [8] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem/system/IO-TCP/selectors/$a/16#1676868143] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+[INFO] [pekkoDeadLetter][10/29/2025 08:05:10.913] [websocketActorSystem-pekko.actor.default-dispatcher-54] [pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor] Message [com.patson.stream.KeepAlivePong$] from Actor[pekko://websocketActorSystem/user/bridgeActor#-1567611301] to Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075] was not delivered. [9] dead letters encountered. If this is not an expected behavior then Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075] may have terminated unexpectedly. This logging can be turned off or adjusted with configuration settings 'pekko.log-dead-letters' and 'pekko.log-dead-letters-during-shutdown'.
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[WARN] [10/29/2025 08:05:41.071] [websocketActorSystem-pekko.remote.default-remote-dispatcher-51] [org.apache.pekko.stream.Log(pekko://websocketActorSystem/system/Materializers/StreamSupervisor-2)] [outbound connection to [pekko://websocketActorSystem@192.168.50.15:10999], message stream] Upstream failed, cause: Association$OutboundStreamStopIdleSignal$: 
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed
+[INFO] [10/29/2025 08:26:14.669] [websocketActorSystem-pekko.actor.default-dispatcher-56] [Association(pekko://websocketActorSystem)] Stopping idle outbound control stream to [pekko://websocketActorSystem@192.168.50.15:10999]
+[INFO] [10/29/2025 08:26:45.787] [websocketActorSystem-pekko.actor.default-dispatcher-56] [Association(pekko://websocketActorSystem)] Stopping idle outbound stream [2] to [pekko://websocketActorSystem@192.168.50.15:10999]
+[WARN] [10/29/2025 08:52:13.192] [websocketActorSystem-pekko.remote.default-remote-dispatcher-49] [org.apache.pekko.stream.Log(pekko://websocketActorSystem/system/Materializers/StreamSupervisor-2)] [outbound connection to [pekko://websocketActorSystem@192.168.50.15:10999], message stream] Upstream failed, cause: Association$OutboundStreamStopIdleSignal$: 
+[INFO] [10/29/2025 08:55:32.804] [websocketActorSystem-pekko.remote.default-remote-dispatcher-51] [OutboundHandshake(pekko://websocketActorSystem)] Association to [pekko://websocketActorSystem@192.168.50.15:10999] has been idle for [2554] seconds, sending HandshakeReq to validate liveness
+Actor[pekko://websocketActorSystem@192.168.50.15:10999/user/local-main-actor#-942941075]() subscribed

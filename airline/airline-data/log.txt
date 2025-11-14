@@ -1,0 +1,211 @@
+[warn] - play.api.Play - 
+You are using the deprecated global state to set and access the current running application. If you
+need an instance of Application, set play.allowGlobalApplication = false and use Dependency Injection instead.
+
+
+
+
+
+
+[warn] Canceling execution...
+[warn] Canceling execution...
+[info] - play.api.internal.libs.concurrent.CoordinatedShutdownSupport - Starting synchronous coordinated shutdown with ServerStoppedReason reason and 40000 milliseconds timeout
+[info] - org.apache.pekko.actor.CoordinatedShutdown - Running CoordinatedShutdown with reason [ServerStoppedReason]
+[info] - play.core.server.PekkoHttpServer - Stopping Pekko HTTP server...
+[info] - play.core.server.PekkoHttpServer - Unbinding /0:0:0:0:0:0:0:0:9000
+[info] - play.core.server.PekkoHttpServer - Terminating server binding for /0:0:0:0:0:0:0:0:9000
+[warn] - org.apache.pekko.actor.CoordinatedShutdown - Coordinated shutdown phase [service-requests-done] timed out after 5000 milliseconds
+[info] - org.apache.pekko.actor.CoordinatedShutdown - Running CoordinatedShutdown with reason [ApplicationStoppedReason]
+[info] - play.api.db.HikariCPConnectionPool - Shutting down connection pool.
+[info] - com.zaxxer.hikari.HikariDataSource - HikariPool-default - Shutdown initiated...
+[info] - com.zaxxer.hikari.HikariDataSource - HikariPool-default - Shutdown completed.
+[warn] - com.mchange.v2.resourcepool.BasicResourcePool - com.mchange.v2.resourcepool.BasicResourcePool$ScatteredAcquireTask@ed8db66 -- Acquisition Attempt Failed!!! Clearing pending acquires. While trying to acquire a needed new resource, we failed to succeed more than the maximum number of allowed acquisition attempts (30). Last acquisition attempt exception: 
+java.sql.SQLNonTransientConnectionException: Could not create connection to database server. Attempted reconnect 3 times. Giving up.
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:111)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:98)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:90)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:64)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:74)
+        at com.mysql.cj.jdbc.ConnectionImpl.connectWithRetries(ConnectionImpl.java:889)
+        at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:814)
+        at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:440)
+        at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239)
+        at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188)
+        at com.mchange.v2.c3p0.DriverManagerDataSource.getConnection(DriverManagerDataSource.java:175)
+        at com.mchange.v2.c3p0.WrapperConnectionPoolDataSource.getPooledConnection(WrapperConnectionPoolDataSource.java:220)
+        at com.mchange.v2.c3p0.WrapperConnectionPoolDataSource.getPooledConnection(WrapperConnectionPoolDataSource.java:206)
+        at com.mchange.v2.c3p0.impl.C3P0PooledConnectionPool$1PooledConnectionResourcePoolManager.acquireResource(C3P0PooledConnectionPool.java:203)
+        at com.mchange.v2.resourcepool.BasicResourcePool.doAcquire(BasicResourcePool.java:1176)
+        at com.mchange.v2.resourcepool.BasicResourcePool.doAcquireAndDecrementPendingAcquiresWithinLockOnSuccess(BasicResourcePool.java:1163)
+        at com.mchange.v2.resourcepool.BasicResourcePool.access$700(BasicResourcePool.java:44)
+        at com.mchange.v2.resourcepool.BasicResourcePool$ScatteredAcquireTask.run(BasicResourcePool.java:1908)
+        at com.mchange.v2.async.ThreadPoolAsynchronousRunner$PoolThread.run(ThreadPoolAsynchronousRunner.java:696)
+Caused by: com.mysql.cj.exceptions.CJException: Public Key Retrieval is not allowed
+        at jdk.internal.reflect.GeneratedConstructorAccessor32.newInstance(Unknown Source)
+        at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:150)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:123)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:153)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:49)
+        at com.mysql.cj.protocol.a.NativeAuthenticationProvider.proceedHandshakeWithPluggableAuthentication(NativeAuthenticationProvider.java:443)
+        at com.mysql.cj.protocol.a.NativeAuthenticationProvider.connect(NativeAuthenticationProvider.java:213)
+        at com.mysql.cj.protocol.a.NativeProtocol.connect(NativeProtocol.java:1430)
+        at com.mysql.cj.NativeSession.connect(NativeSession.java:134)
+        at com.mysql.cj.jdbc.ConnectionImpl.connectWithRetries(ConnectionImpl.java:833)
+        ... 13 common frames omitted
+Caused by: com.mysql.cj.exceptions.UnableToConnectException: Public Key Retrieval is not allowed
+        at jdk.internal.reflect.GeneratedConstructorAccessor30.newInstance(Unknown Source)
+        at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:86)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:130)
+        ... 19 common frames omitted
+[warn] - com.mchange.v2.resourcepool.BasicResourcePool - com.mchange.v2.resourcepool.BasicResourcePool$ScatteredAcquireTask@799f5967 -- Acquisition Attempt Failed!!! Clearing pending acquires. While trying to acquire a needed new resource, we failed to succeed more than the maximum number of allowed acquisition attempts (30). Last acquisition attempt exception: 
+java.sql.SQLNonTransientConnectionException: Could not create connection to database server. Attempted reconnect 3 times. Giving up.
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:111)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:98)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:90)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:64)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:74)
+        at com.mysql.cj.jdbc.ConnectionImpl.connectWithRetries(ConnectionImpl.java:889)
+        at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:814)
+        at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:440)
+        at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239)
+        at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188)
+        at com.mchange.v2.c3p0.DriverManagerDataSource.getConnection(DriverManagerDataSource.java:175)
+        at com.mchange.v2.c3p0.WrapperConnectionPoolDataSource.getPooledConnection(WrapperConnectionPoolDataSource.java:220)
+        at com.mchange.v2.c3p0.WrapperConnectionPoolDataSource.getPooledConnection(WrapperConnectionPoolDataSource.java:206)
+        at com.mchange.v2.c3p0.impl.C3P0PooledConnectionPool$1PooledConnectionResourcePoolManager.acquireResource(C3P0PooledConnectionPool.java:203)
+        at com.mchange.v2.resourcepool.BasicResourcePool.doAcquire(BasicResourcePool.java:1176)
+        at com.mchange.v2.resourcepool.BasicResourcePool.doAcquireAndDecrementPendingAcquiresWithinLockOnSuccess(BasicResourcePool.java:1163)
+        at com.mchange.v2.resourcepool.BasicResourcePool.access$700(BasicResourcePool.java:44)
+        at com.mchange.v2.resourcepool.BasicResourcePool$ScatteredAcquireTask.run(BasicResourcePool.java:1908)
+        at com.mchange.v2.async.ThreadPoolAsynchronousRunner$PoolThread.run(ThreadPoolAsynchronousRunner.java:696)
+Caused by: com.mysql.cj.exceptions.CJException: Public Key Retrieval is not allowed
+        at jdk.internal.reflect.GeneratedConstructorAccessor32.newInstance(Unknown Source)
+        at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:150)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:123)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:153)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:49)
+        at com.mysql.cj.protocol.a.NativeAuthenticationProvider.proceedHandshakeWithPluggableAuthentication(NativeAuthenticationProvider.java:443)
+        at com.mysql.cj.protocol.a.NativeAuthenticationProvider.connect(NativeAuthenticationProvider.java:213)
+        at com.mysql.cj.protocol.a.NativeProtocol.connect(NativeProtocol.java:1430)
+        at com.mysql.cj.NativeSession.connect(NativeSession.java:134)
+        at com.mysql.cj.jdbc.ConnectionImpl.connectWithRetries(ConnectionImpl.java:833)
+        ... 13 common frames omitted
+Caused by: com.mysql.cj.exceptions.UnableToConnectException: Public Key Retrieval is not allowed
+        at jdk.internal.reflect.GeneratedConstructorAccessor30.newInstance(Unknown Source)
+        at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:86)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:130)
+        ... 19 common frames omitted
+[warn] - com.mchange.v2.resourcepool.BasicResourcePool - Having failed to acquire a resource, com.mchange.v2.resourcepool.BasicResourcePool@56e8de28 is interrupting all Threads waiting on a resource to check out. Will try again in response to new client requests.
+[warn] - com.mchange.v2.resourcepool.BasicResourcePool - Having failed to acquire a resource, com.mchange.v2.resourcepool.BasicResourcePool@56e8de28 is interrupting all Threads waiting on a resource to check out. Will try again in response to new client requests.
+[warn] - com.mchange.v2.resourcepool.BasicResourcePool - com.mchange.v2.resourcepool.BasicResourcePool$ScatteredAcquireTask@433407fc -- Acquisition Attempt Failed!!! Clearing pending acquires. While trying to acquire a needed new resource, we failed to succeed more than the maximum number of allowed acquisition attempts (30). Last acquisition attempt exception: 
+java.sql.SQLNonTransientConnectionException: Could not create connection to database server. Attempted reconnect 3 times. Giving up.
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:111)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:98)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:90)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:64)
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:74)
+        at com.mysql.cj.jdbc.ConnectionImpl.connectWithRetries(ConnectionImpl.java:889)
+        at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:814)
+        at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:440)
+        at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239)
+        at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188)
+        at com.mchange.v2.c3p0.DriverManagerDataSource.getConnection(DriverManagerDataSource.java:175)
+        at com.mchange.v2.c3p0.WrapperConnectionPoolDataSource.getPooledConnection(WrapperConnectionPoolDataSource.java:220)
+        at com.mchange.v2.c3p0.WrapperConnectionPoolDataSource.getPooledConnection(WrapperConnectionPoolDataSource.java:206)
+        at com.mchange.v2.c3p0.impl.C3P0PooledConnectionPool$1PooledConnectionResourcePoolManager.acquireResource(C3P0PooledConnectionPool.java:203)
+        at com.mchange.v2.resourcepool.BasicResourcePool.doAcquire(BasicResourcePool.java:1176)
+        at com.mchange.v2.resourcepool.BasicResourcePool.doAcquireAndDecrementPendingAcquiresWithinLockOnSuccess(BasicResourcePool.java:1163)
+        at com.mchange.v2.resourcepool.BasicResourcePool.access$700(BasicResourcePool.java:44)
+        at com.mchange.v2.resourcepool.BasicResourcePool$ScatteredAcquireTask.run(BasicResourcePool.java:1908)
+        at com.mchange.v2.async.ThreadPoolAsynchronousRunner$PoolThread.run(ThreadPoolAsynchronousRunner.java:696)
+Caused by: com.mysql.cj.exceptions.CJException: Public Key Retrieval is not allowed
+        at jdk.internal.reflect.GeneratedConstructorAccessor32.newInstance(Unknown Source)
+        at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:150)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:123)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:153)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:49)
+        at com.mysql.cj.protocol.a.NativeAuthenticationProvider.proceedHandshakeWithPluggableAuthentication(NativeAuthenticationProvider.java:443)
+        at com.mysql.cj.protocol.a.NativeAuthenticationProvider.connect(NativeAuthenticationProvider.java:213)
+        at com.mysql.cj.protocol.a.NativeProtocol.connect(NativeProtocol.java:1430)
+        at com.mysql.cj.NativeSession.connect(NativeSession.java:134)
+        at com.mysql.cj.jdbc.ConnectionImpl.connectWithRetries(ConnectionImpl.java:833)
+        ... 13 common frames omitted
+Caused by: com.mysql.cj.exceptions.UnableToConnectException: Public Key Retrieval is not allowed
+        at jdk.internal.reflect.GeneratedConstructorAccessor30.newInstance(Unknown Source)
+        at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:490)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62)
+        at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:86)
+        at com.mysql.cj.protocol.a.authentication.CachingSha2PasswordPlugin.nextAuthenticationStep(CachingSha2PasswordPlugin.java:130)
+        ... 19 common frames omitted
+[warn] - com.mchange.v2.resourcepool.BasicResourcePool - Having failed to acquire a resource, com.mchange.v2.resourcepool.BasicResourcePool@56e8de28 is interrupting all Threads waiting on a resource to check out. Will try again in response to new client requests.
+[info] - org.apache.pekko.remote.RemoteActorRefProvider$RemotingTerminator - Shutting down remote daemon.
+[info] - org.apache.pekko.remote.RemoteActorRefProvider$RemotingTerminator - Remote daemon shut down; proceeding with flushing remote transports.
+Cancelled: runMain com.patson.MainSimulation
+[info] - org.apache.pekko.remote.RemoteActorRefProvider$RemotingTerminator - Remoting shut down.
+[info] - play.core.server.PekkoHttpServer - Running provided shutdown stop hooks
+
+[error] Cancelled: runMain com.patson.MainSimulation
+[error] Use 'last' for the full log.
+Cancelled: run
+Exception in thread "sbt-bg-threads-1" java.lang.InterruptedException
+        at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1040)
+        at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1345)
+        at scala.concurrent.impl.Promise$DefaultPromise.tryAwait0(Promise.scala:243)
+        at scala.concurrent.impl.Promise$DefaultPromise.result(Promise.scala:261)
+        at scala.concurrent.Await$.$anonfun$result$1(package.scala:201)
+        at scala.concurrent.BlockContext$DefaultBlockContext$.blockOn(BlockContext.scala:62)
+        at scala.concurrent.Await$.result(package.scala:124)
+        at com.patson.MainSimulation$.mainFlow(MainSimulation.scala:32)
+        at com.patson.MainSimulation$.delayedEndpoint$com$patson$MainSimulation$1(MainSimulation.scala:27)
+        at com.patson.MainSimulation$delayedInit$body.apply(MainSimulation.scala:17)
+        at scala.Function0.apply$mcV$sp(Function0.scala:42)
+        at scala.Function0.apply$mcV$sp$(Function0.scala:42)
+        at scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:17)
+        at scala.App.$anonfun$main$1(App.scala:98)
+        at scala.App.$anonfun$main$1$adapted(App.scala:98)
+        at scala.collection.IterableOnceOps.foreach(IterableOnce.scala:576)
+        at scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:574)
+        at scala.collection.AbstractIterable.foreach(Iterable.scala:933)
+        at scala.App.main(App.scala:98)
+        at scala.App.main$(App.scala:96)
+        at com.patson.MainSimulation$.main(MainSimulation.scala:17)
+        at com.patson.MainSimulation.main(MainSimulation.scala)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+        at sbt.Run.invokeMain(Run.scala:144)
+        at sbt.Run.execute$1(Run.scala:94)
+        at sbt.Run.$anonfun$runWithLoader$5(Run.scala:121)
+        at sbt.Run$.executeSuccess(Run.scala:187)
+        at sbt.Run.runWithLoader(Run.scala:121)
+        at sbt.Defaults$.$anonfun$bgRunMainTask$7(Defaults.scala:1956)
+        at sbt.Defaults$.$anonfun$termWrapper$2(Defaults.scala:1927)
+        at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+        at scala.util.Try$.apply(Try.scala:213)
+        at sbt.internal.BackgroundThreadPool$BackgroundRunnable.run(DefaultBackgroundJobService.scala:367)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+        at java.base/java.lang.Thread.run(Thread.java:829)
+[error] Cancelled: run
+[error] Use 'last' for the full log.
+[WARN] [10/24/2025 05:57:04.585] [Thread-6] [CoordinatedShutdown(pekko://websocketActorSystem)] Could not addJvmShutdownHook, due to: Shutdown in progress
