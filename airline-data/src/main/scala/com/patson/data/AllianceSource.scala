@@ -97,18 +97,20 @@ object AllianceSource {
         
         val allianceMembers = new ListBuffer[AllianceMember]()
         val airlineIds = new ListBuffer[Int]()
-        
+        val rows = new ListBuffer[(Int, String, Int)]() // airlineId, role, joined_cycle
+
         while (resultSet.next()) {
-          airlineIds.append(resultSet.getInt("airline"))
+          val airlineId = resultSet.getInt("airline")
+          airlineIds.append(airlineId)
+          rows.append((airlineId, resultSet.getString("role"), resultSet.getInt("joined_cycle")))
         }
-        
+
         //val airlinesById = AirlineSource.loadAirlinesByIds(airlineIds.toList, fullLoad).map( airline => (airline.id , airline)).toMap
         val airlinesById = AirlineCache.getAirlines(airlineIds.toList, fullLoad)
-        
-        resultSet.beforeFirst()
-        while (resultSet.next()) {
-          val allianceMember = AllianceMember(allianceId, airlinesById(resultSet.getInt("airline")), AllianceRole.withName(resultSet.getString("role")), joinedCycle = resultSet.getInt("joined_cycle"))
-          allianceMembers.append(allianceMember)    
+
+        rows.foreach { case (airlineId, roleStr, joinedCycle) =>
+          val allianceMember = AllianceMember(allianceId, airlinesById(airlineId), AllianceRole.withName(roleStr), joinedCycle = joinedCycle)
+          allianceMembers.append(allianceMember)
         }
         resultSet.close()
         preparedStatement.close()
@@ -216,20 +218,21 @@ object AllianceSource {
         val resultSet = preparedStatement.executeQuery()
         
         val allianceHistoryEntries = ListBuffer[AllianceHistory]()
-        
+
         val airlineIds = new ListBuffer[Int]()
-        
+        val rows = new ListBuffer[(String, Int, String, Int)]() // alliance_name, airlineId, event, cycle
+
         while (resultSet.next()) {
-          airlineIds.append(resultSet.getInt("airline"))
+          val airlineId = resultSet.getInt("airline")
+          airlineIds.append(airlineId)
+          rows.append((resultSet.getString("alliance_name"), airlineId, resultSet.getString("event"), resultSet.getInt("cycle")))
         }
-        
+
         //val airlinesById = AirlineSource.loadAirlinesByIds(airlineIds.toList, fullLoad).map( airline => (airline.id , airline)).toMap
         val airlinesById = AirlineCache.getAirlines(airlineIds.toList, fullLoad)
-        
-        resultSet.beforeFirst()
-        
-        while (resultSet.next()) {
-          val allianceHistoryEntry = AllianceHistory(allianceName = resultSet.getString("alliance_name"), airline = airlinesById(resultSet.getInt("airline")), event = AllianceEvent.withName(resultSet.getString("event")), cycle = resultSet.getInt("cycle"))
+
+        rows.foreach { case (allianceName, airlineId, eventStr, cycle) =>
+          val allianceHistoryEntry = AllianceHistory(allianceName = allianceName, airline = airlinesById(airlineId), event = AllianceEvent.withName(eventStr), cycle = cycle)
           allianceHistoryEntries.append(allianceHistoryEntry)
         }
         

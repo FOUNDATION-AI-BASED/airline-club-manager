@@ -34,41 +34,39 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class SearchUtil {
-	private final static Logger logger = LoggerFactory.getLogger(SearchUtil.class);
-	static {
-		checkInit();
-	}
+    private final static Logger logger = LoggerFactory.getLogger(SearchUtil.class);
+    // Avoid eager Elasticsearch initialization during class load to prevent startup failures
 
 	/**
 	 * Initialize the index if it's empty
 	 */
-	private static void checkInit() {
-		try (RestHighLevelClient client = getClient()) {
-			if (!isIndexExist(client, "airports")) {
-				System.out.println("Initializing ES airports");
-				initAirports(client);
-			}
-			if (!isIndexExist(client, "countries")) {
-				System.out.println("Initializing ES countires");
-				initCountries(client);
-			}
-			if (!isIndexExist(client, "zones")) {
-				System.out.println("Initializing ES zones");
-				initZones(client);
-			}
-			if (!isIndexExist(client, "airlines")) {
-				System.out.println("Initializing ES airlines");
-				initAirlines(client);
-			}
-			if (!isIndexExist(client, "alliances")) {
-				System.out.println("Initializing ES alliances");
-				initAlliances(client);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("ES check finished");
-	}
+    private static void checkInit() {
+        try (RestHighLevelClient client = getClient()) {
+            if (!isIndexExist(client, "airports")) {
+                System.out.println("Initializing ES airports");
+                initAirports(client);
+            }
+            if (!isIndexExist(client, "countries")) {
+                System.out.println("Initializing ES countires");
+                initCountries(client);
+            }
+            if (!isIndexExist(client, "zones")) {
+                System.out.println("Initializing ES zones");
+                initZones(client);
+            }
+            if (!isIndexExist(client, "airlines")) {
+                System.out.println("Initializing ES airlines");
+                initAirlines(client);
+            }
+            if (!isIndexExist(client, "alliances")) {
+                System.out.println("Initializing ES alliances");
+                initAlliances(client);
+            }
+        } catch (Throwable e) { // catch broadly to prevent failures if ES is unavailable
+            e.printStackTrace();
+        }
+        System.out.println("ES check finished");
+    }
 
 	public static void main(String[] args) throws IOException {
 		init();
@@ -189,21 +187,21 @@ public class SearchUtil {
 		}
 	}
 
-	public static void addAirline(Airline airline) {
-		try (RestHighLevelClient client = getClient()) {
-			Map<String, Object> jsonMap = new HashMap<>();
-			jsonMap.put("airlineId", airline.id());
-			jsonMap.put("airlineName", airline.name());
-			jsonMap.put("airlineCode", airline.getAirlineCode());
-			jsonMap.put("previousNames", JavaConverters.asJava(airline.previousNames()));
-			IndexRequest indexRequest = new IndexRequest("airlines").source(jsonMap);
-			logger.info("Indexing new doc " + jsonMap);
-			client.index(indexRequest, RequestOptions.DEFAULT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Added airline " + airline + " to ES");
-	}
+    public static void addAirline(Airline airline) {
+        try (RestHighLevelClient client = getClient()) {
+            Map<String, Object> jsonMap = new HashMap<>();
+            jsonMap.put("airlineId", airline.id());
+            jsonMap.put("airlineName", airline.name());
+            jsonMap.put("airlineCode", airline.getAirlineCode());
+            jsonMap.put("previousNames", JavaConverters.asJava(airline.previousNames()));
+            IndexRequest indexRequest = new IndexRequest("airlines").source(jsonMap);
+            logger.info("Indexing new doc " + jsonMap);
+            client.index(indexRequest, RequestOptions.DEFAULT);
+        } catch (Throwable e) { // guard against ES unavailability
+            e.printStackTrace();
+        }
+        System.out.println("Added airline " + airline + " to ES");
+    }
 
 	public static void updateAirline(Airline airline) {
 		try (RestHighLevelClient client = getClient()) {
@@ -228,11 +226,11 @@ public class SearchUtil {
 					logger.warn("Hit " + hit.getSourceAsMap() + " is not a match to airline ID " + airline.id());
 				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Updated airline " + airline + " to ES");
-	}
+        } catch (Throwable e) { // guard against ES unavailability
+            e.printStackTrace();
+        }
+        System.out.println("Updated airline " + airline + " to ES");
+    }
 
 
 
@@ -255,20 +253,20 @@ public class SearchUtil {
 		}
 	}
 
-	public static void addAlliance(Alliance alliance) {
-		try (RestHighLevelClient client = getClient()) {
-			Map<String, Object> jsonMap = new HashMap<>();
-			jsonMap.put("allianceId", alliance.id());
-			jsonMap.put("allianceName", alliance.name());
+    public static void addAlliance(Alliance alliance) {
+        try (RestHighLevelClient client = getClient()) {
+            Map<String, Object> jsonMap = new HashMap<>();
+            jsonMap.put("allianceId", alliance.id());
+            jsonMap.put("allianceName", alliance.name());
 
-			IndexRequest indexRequest = new IndexRequest("alliances").source(jsonMap);
-			client.index(indexRequest, RequestOptions.DEFAULT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Added alliance " + alliance + " to ES");
+            IndexRequest indexRequest = new IndexRequest("alliances").source(jsonMap);
+            client.index(indexRequest, RequestOptions.DEFAULT);
+        } catch (Throwable e) { // guard against ES unavailability
+            e.printStackTrace();
+        }
+        System.out.println("Added alliance " + alliance + " to ES");
 
-	}
+    }
 
 	public static void removeAlliance(int allianceId) {
 		try (RestHighLevelClient client = getClient()) {
@@ -277,21 +275,21 @@ public class SearchUtil {
 			request.setRefresh(true);
 
 			client.deleteByQuery(request, RequestOptions.DEFAULT);
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		}
-		System.out.println("Removed alliance with id " + allianceId + " from ES");
-	}
+        } catch (Throwable exception) { // guard against ES unavailability
+            exception.printStackTrace();
+        }
+        System.out.println("Removed alliance with id " + allianceId + " from ES");
+    }
 
 	public static void refreshAlliances() {
 		try (RestHighLevelClient client = getClient()) {
 			System.out.println("Refreshing ES alliances");
 			initAlliances(client);
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		}
-		System.out.println("Refreshed ES alliances");
-	}
+        } catch (Throwable exception) { // guard against ES unavailability
+            exception.printStackTrace();
+        }
+        System.out.println("Refreshed ES alliances");
+    }
 
 
 	private static final Pattern letterSpaceOnlyPattern = Pattern.compile("^[ A-Za-z]+$");
@@ -339,12 +337,12 @@ public class SearchUtil {
 
 			//System.out.println("done");
 			return result;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return Collections.EMPTY_LIST;
-		}
+        } catch (Throwable e) { // guard against ES unavailability
+            e.printStackTrace();
+            return Collections.EMPTY_LIST;
+        }
 
-	}
+    }
 
 
 	public static List<CountrySearchResult> searchCountry(String input) {
@@ -387,11 +385,11 @@ public class SearchUtil {
 
 			//System.out.println("done");
 			return result;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return Collections.EMPTY_LIST;
-		}
-	}
+        } catch (Throwable e) { // guard against ES unavailability
+            e.printStackTrace();
+            return Collections.EMPTY_LIST;
+        }
+    }
 
 	public static List<ZoneSearchResult> searchZone(String input) {
 		if (!letterSpaceOnlyPattern.matcher(input).matches()) {
@@ -433,11 +431,11 @@ public class SearchUtil {
 
 			//System.out.println("done");
 			return result;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return Collections.EMPTY_LIST;
-		}
-	}
+        } catch (Throwable e) { // guard against ES unavailability
+            e.printStackTrace();
+            return Collections.EMPTY_LIST;
+        }
+    }
 
 	public static List<AirlineSearchResult> searchAirline(String input) {
 		if (!letterSpaceOnlyPattern.matcher(input).matches()) {
@@ -483,12 +481,12 @@ public class SearchUtil {
 
 			//System.out.println("done");
 			return result;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return Collections.EMPTY_LIST;
-		}
+        } catch (Throwable e) { // guard against ES unavailability
+            e.printStackTrace();
+            return Collections.EMPTY_LIST;
+        }
 
-	}
+    }
 
 	public static List<AllianceSearchResult> searchAlliance(String input) {
 		if (!letterSpaceOnlyPattern.matcher(input).matches()) {
@@ -529,19 +527,20 @@ public class SearchUtil {
 
 			//System.out.println("done");
 			return result;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return Collections.EMPTY_LIST;
-		}
-	}
+        } catch (Throwable e) { // guard against ES unavailability
+            e.printStackTrace();
+            return Collections.EMPTY_LIST;
+        }
+    }
 
 
 	private static RestHighLevelClient getClient() {
 		RestHighLevelClient client = new RestHighLevelClient(
 				RestClient.builder(
-						new HttpHost("localhost", 9200, "http"),
-						new HttpHost("localhost", 9201, "http")));
-		return client;
+						new HttpHost("localhost", 9200, "http")
+		)
+	);
+	return client;
 	}
 }
 

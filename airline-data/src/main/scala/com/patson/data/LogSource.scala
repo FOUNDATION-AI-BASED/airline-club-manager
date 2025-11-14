@@ -100,8 +100,7 @@ object LogSource {
         return List.empty
       }
 
-      resultSet.beforeFirst()
-
+      // Do not rewind resultSet; it is at end after ID pass. We can use stored ids to fetch properties, then re-run main query for row iteration
       val propertiesById = HashMap[Int, HashMap[String, String]]()
       if (!ids.isEmpty) {
         val propertyStatement = connection.prepareStatement(s"SELECT * FROM $LOG_PROPERTY_TABLE WHERE log IN (${ids.mkString(",")})")
@@ -121,15 +120,17 @@ object LogSource {
 
       }
 
-
-      while (resultSet.next()) {
-        val airlineId = resultSet.getInt("airline")
+      // Re-execute main query for the second pass over rows
+      resultSet.close()
+      val resultSet2 = preparedStatement.executeQuery()
+      while (resultSet2.next()) {
+        val airlineId = resultSet2.getInt("airline")
         val airline = airlines.getOrElseUpdate(airlineId, AirlineCache.getAirline(airlineId, fullLoad).getOrElse(Airline.fromId(airlineId)))
-        val message = resultSet.getString("message")
-        val category = LogCategory(resultSet.getInt("category"))
-        val severity = LogSeverity(resultSet.getInt("severity"))
-        val cycle = resultSet.getInt("cycle")
-        val id = resultSet.getInt("id")
+        val message = resultSet2.getString("message")
+        val category = LogCategory(resultSet2.getInt("category"))
+        val severity = LogSeverity(resultSet2.getInt("severity"))
+        val cycle = resultSet2.getInt("cycle")
+        val id = resultSet2.getInt("id")
         logs += Log(
           airline, message, category, severity, cycle,
           propertiesById.get(id) match {
@@ -140,7 +141,7 @@ object LogSource {
       }
 
 
-      resultSet.close()
+      resultSet2.close()
       preparedStatement.close()
         
       logs.toList

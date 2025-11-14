@@ -3,11 +3,16 @@
   <head>
     <style type="text/css">
       html, body { height: 100%; margin: 0; padding: 0; }
-      #map { height: 100%; }
+      #map { height: 80vh; position: relative; z-index: 0; }
+      #panel { height: 80vh; overflow: auto; }
+      /* Move zoom control to top-left with 20px offset */
+      .leaflet-top { top: 20px !important; }
+      .leaflet-left { left: 20px !important; }
+      .leaflet-left .leaflet-control-zoom { margin: 0 !important; }
     </style>
     <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("css-templates/treviso/css/style.css")">
     <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("stylesheets/main.css")">
-    <script src="@routes.Assets.versioned("javascripts/jquery-2.1.4.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/libs/jquery-2.1.4.js")"></script>
   </head>
   <body>
   	<div id="topBar" data-scroll="false" class="menubar">
@@ -16,17 +21,17 @@
   	</div>
   	<div id="main" style="width: 100%" >
 	    <div id="map" style="width: 80% ; float: left;" ></div>
-	    <div id="panel" style="width: 20% ; float: right;" >
-	    	Airline: <select id="airlineOption" onclick="updateAirlineInfo($(this).val())"></select>
+      <div id="panel" style="width: 20% ; float: right;" >
+        Airline: <select id="airlineOption"></select>
 	    	<div>
 	    		From: <input type="text" id="fromAirport"/><br/>
 	    		To:	<input type="text" id="toAirport"/><br/>
 	    		Capacity: <input type="text" id="capacity" value="100"/><br/>
 	    		Quality: <input type="text" id="quality" value="10"/><br/>
 	    		Price: <input type="text" id="price" value="1000"/><br/>
-	    		<div class="button" id="addLinkButton" onclick="insertTestLink()">Add Link</div>
-		    </div>
-		   	<div class="button" id="removeAllLinksButton" onclick="removeAllLinks()">Remove all Links</div>	
+        <div class="button" id="addLinkButton" onclick="insertTestLink()">Add Link</div>
+      </div>
+        <div class="button" id="removeAllLinksButton" onclick="removeAllTestLinks()">Remove all Links</div> 
 	    	<div>
 	    		Buy aircraft:<br/>
 	    		Model : <select id="airplaneModelOption" onchange="updateModelInfo($('#modelInfo'), $(this).val())"></select><br/>
@@ -53,8 +58,10 @@
     <script src="@routes.Assets.versioned("javascripts/airplane.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/airline.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/websocket.js")"></script>
-    <script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5XQhzy2XrM95AyfW8f5BeWJiqr-LGXxU&callback=initMap">
-</script> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet%401.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet%401.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+    <script src="@routes.Assets.versioned("javascripts/leaflet-google-shim.js")"></script>
+    <script>document.addEventListener('DOMContentLoaded', function(){ if (typeof initMap === 'function') { initMap(); } });</script>
   </body>
 </html>

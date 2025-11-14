@@ -82,20 +82,22 @@ object AllianceMissionSource {
 
       val idToProperties = loadPropertiesByMissionIds(ids.toList)
 
-      resultSet.beforeFirst()
-      while (resultSet.next()) {
-        val missionType = AllianceMissionType.withName(resultSet.getString("mission_type"))
-        val startCycle = resultSet.getInt("start_cycle")
-        val duration = resultSet.getInt("duration")
-        val allianceId = resultSet.getInt("alliance")
-        val missionId = resultSet.getInt("id")
-        val status = AllianceMissionStatus.withName(resultSet.getString("status"))
+      // Re-execute query for second pass instead of beforeFirst
+      resultSet.close()
+      val resultSet2 = preparedStatement.executeQuery()
+      while (resultSet2.next()) {
+        val missionType = AllianceMissionType.withName(resultSet2.getString("mission_type"))
+        val startCycle = resultSet2.getInt("start_cycle")
+        val duration = resultSet2.getInt("duration")
+        val allianceId = resultSet2.getInt("alliance")
+        val missionId = resultSet2.getInt("id")
+        val status = AllianceMissionStatus.withName(resultSet2.getString("status"))
 
 
         missions += AllianceMission.buildAllianceMission(missionType, startCycle, duration, allianceId, status, idToProperties.getOrElse(missionId, Map.empty), missionId)
       }
 
-      resultSet.close()
+      resultSet2.close()
       preparedStatement.close()
 
       missions.toList

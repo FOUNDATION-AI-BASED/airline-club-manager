@@ -167,13 +167,13 @@ div#topBar {
 }
 /**/
 /* back button for when you place the google maps man */
-div[jstcache="0"] > div:is([style="z-index: 24601; position: absolute; left: 0px; top: 0px;"]) {
-	top: 50px !important;
-	left: 50px !important
+#map div[jstcache="0"] > div:is([style="z-index: 24601; position: absolute; left: 0px; top: 0px;"]) {
+    top: 50px !important;
+    left: 50px !important
 }
-div[jstcache="0"] > :has(> .gm-iv-address) {
-	top: 50px !important;
-	left: 78px !important;
+#map div[jstcache="0"] > :has(> .gm-iv-address) {
+    top: 50px !important;
+    left: 78px !important;
 }
 #mainContainer {
 	padding-top: 40px;
@@ -268,10 +268,11 @@ html[data-theme="dark"] :is(.gm-fullscreen-control img, .gmnoprint div button im
 }
 /*===== vv fullscreen map vv =====*/
 #map {
-	width: 100%;
-	height: 100%;
-	top: 0px !important;
-	position: fixed !important
+    width: 100%;
+    height: 100%;
+    top: 0px !important;
+    position: fixed !important;
+    z-index: 0;
 }
 #hideRivalMapButton {
 	top: 48px !important
@@ -280,14 +281,15 @@ html[data-theme="dark"] :is(.gm-fullscreen-control img, .gmnoprint div button im
     width: 55%;
 }
 #sidePanel {
-	position: absolute;
-	padding-left: 10px;
-	padding-right: 32px;
-	box-sizing: border-box;
-	width: 45%;
-	pointer-events: none;
-	border-radius: 8px !important;
-	right: 0;
+    position: absolute;
+    padding-left: 10px;
+    padding-right: 32px;
+    box-sizing: border-box;
+    width: 45%;
+    pointer-events: none;
+    border-radius: 8px !important;
+    right: 0;
+    z-index: 2;
 }
 #sidePanel > * {
 	pointer-events: auto;
@@ -329,11 +331,11 @@ html[data-theme="dark"] :is(.gm-fullscreen-control img, .gmnoprint div button im
 	left: 100% !important;
 	top: -100% !important;
 }
-.gm-fullscreen-control {
-	position: fixed !important;
-	top: 40px !important;
-	border-radius: 8px !important;
-	box-shadow: var(--shadow-2) !important;
+#map .gm-fullscreen-control {
+    position: fixed !important;
+    top: 40px !important;
+    border-radius: 8px !important;
+    box-shadow: var(--shadow-2) !important;
 }
 #map div[style="user-select: none; box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; border-radius: 2px; cursor: pointer; background-color: rgb(255, 255, 255); width: 40px; height: 81px;"] {
 	position: fixed !important;

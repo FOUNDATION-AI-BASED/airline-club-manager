@@ -1,0 +1,24 @@
+[info] waiting for lock on /home/kali/.sbt/boot/sbt.boot.lock to be available...
+[info] welcome to sbt 1.9.9 (Ubuntu Java 11.0.28)
+[info] loading settings for project airline-web-build from plugins.sbt ...
+[info] loading project definition from /home/kali/airline/airline-web/project
+[info] loading settings for project root from build.sbt ...
+[info]   __              __
+[info]   \ \     ____   / /____ _ __  __
+[info]    \ \   / __ \ / // __ `// / / /
+[info]    / /  / /_/ // // /_/ // /_/ /
+[info]   /_/  / .___//_/ \__,_/ \__, /
+[info]       /_/               /____/
+[info] 
+[info] Version 3.0.5 running Java 11.0.28
+[info] 
+[info] Play is run entirely by the community. Please consider contributing and/or donating:
+[info] https://www.playframework.com/sponsors
+[info] 
+
+[35m--- (Running the application, auto-reloading is enabled) ---[0m
+
+[34mINFO [0;39m p.c.s.PekkoHttpServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+[32m(Server started, use Enter to stop and go back to the console...)[0m
+

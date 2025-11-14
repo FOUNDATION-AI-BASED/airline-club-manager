@@ -63,6 +63,27 @@ $( document ).ready(function() {
 //    startFirework(10000)
 
 	//plotSeatConfigurationGauge($("#seatConfigurationGauge"), {"first" : 0, "business" : 0, "economy" : 220}, 220)
+
+    // Initialize airport marker icons (restores original marker visuals)
+    try {
+        var markerBasePath = 'assets/images/markers/';
+        var defSize = { width: 25, height: 41 };
+        var defAnchor = { x: 12, y: 41 };
+
+        $('#map').data('largeAirportMarker', { url: markerBasePath + 'airport.png', anchor: defAnchor, size: defSize });
+        $('#map').data('mediumAirportMarker', { url: markerBasePath + 'airport-lighter.png', anchor: defAnchor, size: defSize });
+        $('#map').data('smallAirportMarker', { url: markerBasePath + 'airport-transparent.png', anchor: defAnchor, size: defSize });
+        $('#map').data('gatewayAirportMarker', { url: markerBasePath + 'airport-gateway.png', anchor: defAnchor, size: defSize });
+        $('#map').data('headquarterMarker', { url: markerBasePath + 'headquarter.png', anchor: defAnchor, size: defSize });
+        $('#map').data('baseMarker', { url: markerBasePath + 'base.png', anchor: defAnchor, size: defSize });
+        $('#map').data('disabledAirportMarker', { url: markerBasePath + 'airport-darker.png', anchor: defAnchor, size: defSize });
+
+        // Icons for airport detail map city/town/village
+        $('#airportMap').data('airportMarker', { url: markerBasePath + 'airport.png', anchor: defAnchor, size: defSize });
+        $('#airportMap').data('cityMarker', { url: markerBasePath + 'city.png', anchor: { x: 12, y: 12 }, size: { width: 24, height: 24 } });
+        $('#airportMap').data('townMarker', { url: markerBasePath + 'town.png', anchor: { x: 12, y: 12 }, size: { width: 24, height: 24 } });
+        $('#airportMap').data('villageMarker', { url: markerBasePath + 'village.png', anchor: { x: 12, y: 12 }, size: { width: 24, height: 24 } });
+    } catch (e) {}
 })
 
 $(window).on('focus', function() {

@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
   "com.google.inject.extensions" % "guice-assistedinject" % "5.1.0",
   specs2 % Test,
   "org.apache.pekko" %% "pekko-remote" % "1.0.3",
-  "default" %% "airline-data" % "2.1",
+  "default" %% "airline-data" % "2.2",
   "com.google.api-client" % "google-api-client" % "1.30.4",
   "com.google.oauth-client" % "google-oauth-client-jetty" % "1.34.1",
   "com.google.apis" % "google-api-services-gmail" % "v1-rev103-1.25.0",
